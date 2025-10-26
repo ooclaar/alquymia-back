@@ -356,20 +356,55 @@ body {
     font-size: 1.1rem;
 }
 
-/* ===== Hero Stats ===== */
-.hero-stats {
+/* ===== Hero Stats ===== *.hero-stats {
     display: flex;
     gap: 3rem;
     justify-content: center;
     flex-wrap: wrap;
     animation: fadeInUp 0.8s ease 0.8s both;
+    /* Removido fundo e borda da caixa principal */
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+}    /* Removido fundo e borda da caixa principal */
+    background: transparent;
+    border: none;
+    padding: 0;
+}    /* Removido fundo e borda da caixa principal */
+    background: transparent;
+    border: none;
+    padding: 0;
 }
 
 .stat-item {
     text-align: center;
+    /* Reduzido o padding para diminuir a altura da caixa */
+    padding: 0 1rem !important;
+}   /* Reduzido o padding para diminuir a altura da caixa */
+    padding: 0 1rem;
 }
 
 .stat-number {
+    font-family: var(--font-primary);
+    font-size: 3em;
+    font-weight: 900;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+    font-family: var(--font-primary);
+    font-size: 3rem;
+    font-weight: 900;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
     font-family: var(--font-primary);
     font-size: 3rem;
     font-weight: 900;
@@ -1719,6 +1754,26 @@ body {
 
 .stat-number {
     font-family: var(--font-primary);
+    font-size: 3em;
+    font-weight: 900;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+    font-family: var(--font-primary);
+    font-size: 3em;
+    font-weight: 900;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+    font-family: var(--font-primary);
     font-size: 3rem;
     font-weight: 700;
     color: var(--color-primary);
@@ -2029,6 +2084,26 @@ body {
     }
     
     .stat-number {
+    font-family: var(--font-primary);
+    font-size: 3em;
+    font-weight: 900;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+    font-family: var(--font-primary);
+    font-size: 3em;
+    font-weight: 900;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
         font-size: 2rem;
     }
     
@@ -2095,6 +2170,26 @@ body {
 }
 
 .stat-number {
+    font-family: var(--font-primary);
+    font-size: 3em;
+    font-weight: 900;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+    font-family: var(--font-primary);
+    font-size: 3em;
+    font-weight: 900;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
     font-family: 'Orbitron', sans-serif;
     font-size: 3rem;
     font-weight: 700;
@@ -3324,7 +3419,9 @@ textarea:focus {
 
 .stats-grid .stat-item {
     text-align: center;
-    padding: 2rem;
+    /* Reduzido o padding para diminuir a altura da caixa */
+    padding: 0 1rem;
+}   padding: 2rem;
     background: rgba(255, 140, 0, 0.05);
     border: 2px solid rgba(255, 140, 0, 0.2);
     border-radius: 15px;
@@ -3338,6 +3435,26 @@ textarea:focus {
 }
 
 .stats-grid .stat-number {
+    font-family: var(--font-primary);
+    font-size: 3em;
+    font-weight: 900;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+    font-family: var(--font-primary);
+    font-size: 3em;
+    font-weight: 900;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
     font-family: 'Orbitron', sans-serif;
     font-size: 3rem;
     font-weight: 700;

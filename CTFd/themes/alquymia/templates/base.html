@@ -161,6 +161,9 @@
 	                if (countdownContainer) {
 	                    countdownContainer.style.display = 'flex';
 	                }
+	                if (document.getElementById('countdown-title')) {
+	                    document.getElementById('countdown-title').style.display = 'block';
+	                }
 	                
 	                const interval = setInterval(() => {
 	                    const currentNow = Date.now() / 1000;
@@ -173,6 +176,9 @@
 	                        }
 	                        if (placeholder) {
 	                            placeholder.style.display = 'flex';
+	                        }
+	                        if (document.getElementById('countdown-title')) {
+	                            document.getElementById('countdown-title').style.display = 'none';
 	                        }
 	                        return;
 	                    }
@@ -189,15 +195,20 @@
 	                }, 1000);
 	
 	            } else if (now >= start && now <= end) {
-	                // Durante o CTF: Mostra o placeholder (ou nada, dependendo do design)
+	                // Durante o CTF: Mostra o placeholder
 	                if (placeholder) {
 	                    placeholder.style.display = 'flex';
 	                }
 	            } else {
-	                // Depois do CTF: Mostra o placeholder (ou nada)
+	                // Depois do CTF: Mostra o placeholder
 	                if (placeholder) {
 	                    placeholder.style.display = 'flex';
 	                }
+	            }
+	            
+	            // Garante que o título não aparece se o cronômetro não estiver ativo
+	            if (document.getElementById('countdown-title') && countdownContainer && countdownContainer.style.display !== 'flex') {
+	                document.getElementById('countdown-title').style.display = 'none';
 	            }
 	        }
 	
