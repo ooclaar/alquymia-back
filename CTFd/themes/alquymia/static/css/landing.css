@@ -391,7 +391,15 @@ body {
     background-color: transparent !important;
     border: none !important;
     box-shadow: none !important;
-    padding: 0 0.5rem !important; /* Reduzido o padding para compactar */
+    padding: 0 !important; /* Removido todo o padding para compactar */
+}
+
+/* Removendo a borda e padding do stat-item do placeholder também, caso ele apareça */
+#hero-stats-placeholder .stat-item {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
 }
 
 #countdown-container .stat-number {
