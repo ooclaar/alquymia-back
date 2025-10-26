@@ -4978,3 +4978,133 @@ body {
 .user-meta-item a:hover {
     text-decoration: underline;
 }
+
+/* ============================================
+   CRONÔMETRO DE CONTAGEM REGRESSIVA
+   ============================================ */
+
+#countdown-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(0,0,0,0.9) 0%, rgba(20,20,40,0.95) 100%);
+}
+
+.countdown-wrapper {
+    text-align: center;
+    max-width: 900px;
+    padding: 3rem;
+    background: rgba(30, 30, 50, 0.8);
+    border: 2px solid #FF8C00;
+    border-radius: 20px;
+    box-shadow: 0 0 40px rgba(255, 140, 0, 0.3);
+}
+
+.countdown-badge {
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    background: linear-gradient(135deg, #FF8C00, #FFA500);
+    color: #000;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border-radius: 20px;
+    margin-bottom: 1.5rem;
+    letter-spacing: 2px;
+}
+
+.countdown-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: #FF8C00;
+    margin: 1rem 0;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    text-shadow: 0 0 20px rgba(255, 140, 0, 0.5);
+}
+
+.countdown-subtitle {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.5rem;
+    color: #ccc;
+    margin-bottom: 2rem;
+}
+
+.countdown-timer {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+}
+
+.time-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid #FF8C00;
+    border-radius: 15px;
+    min-width: 120px;
+    box-shadow: 0 0 20px rgba(255, 140, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.time-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 30px rgba(255, 140, 0, 0.4);
+}
+
+.time-value {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: #FF8C00;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.time-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.countdown-info {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.2rem;
+    color: #aaa;
+    margin-top: 2rem;
+    line-height: 1.8;
+}
+
+.countdown-info i {
+    color: #FF8C00;
+    margin-right: 0.5rem;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .countdown-title {
+        font-size: 2rem;
+    }
+    
+    .countdown-timer {
+        gap: 1rem;
+    }
+    
+    .time-box {
+        min-width: 80px;
+        padding: 1rem;
+    }
+    
+    .time-value {
+        font-size: 2rem;
+    }
+}
