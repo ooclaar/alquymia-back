@@ -1,23 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if Configs.start %}
-    {% set now = now() %}
-    {% if now < Configs.start %}
-        <!-- CTF ainda não começou - Mostrar cronômetro -->
-        <script>
-            // Forçar exibição do cronômetro
-            document.addEventListener('DOMContentLoaded', function() {
-                const countdownContainer = document.getElementById('countdown-container');
-                const mainContent = document.getElementById('main-content');
-                if (countdownContainer) countdownContainer.style.display = 'flex';
-                if (mainContent) mainContent.style.display = 'none';
-            });
-        </script>
-        <!-- Conteúdo da página inicial será ocultado pelo JavaScript -->
-    {% endif %}
-{% endif %}
-
 <!-- Hero Section -->
 <section class="hero">
     <div class="hero-content">
