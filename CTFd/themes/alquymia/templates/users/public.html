@@ -1,232 +1,497 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Perfil do Usuário - CTF Alquymia 2025">
+    <title>Perfil do Usuário - CTF Alquymia 2025</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(ellipse at top, #1a1a1a 0%, #0a0a0a 100%);
+        }
+        .user-profile-page {
+            min-height: 100vh;
+            background: var(--color-dark);
+            padding-top: 100px;
+        }
 
-{% block content %}
-  <div class="jumbotron">
-    <div class="container">
-      <h1>{{ user.name }}</h1>
+        .badge {
+            display: inline-block;
+            background: transparent;
+            border: 2px solid var(--color-primary);
+            color: var(--color-primary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 1.5rem;
+        }
 
-      {% if user.team_id %}
-        <h2>
-          <a href="{{ url_for('teams.public', team_id=user.team_id) }}">
-            <span class="badge bg-secondary">
-              {{ user.team.name }}
-            </span>
-          </a>
-        </h2>
-      {% endif %}
+        .team-hero {
+            text-align: center;
+            padding: 3rem 2rem 2rem;
+        }
 
-      <div class="pt-2">
-        {% if user.oauth_id %}
-          <a href="https://majorleaguecyber.org/u/{{ user.name }}">
-            <h3 class="d-inline-block mx-1"><span class="badge rounded-pill bg-primary">{% trans %}Official{% endtrans %}</span></h3>
-          </a>
-        {% endif %}
+        .team-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
 
-        {% if user.affiliation %}
-          <h3 class="d-inline-block mx-1">
-            <span class="badge rounded-pill bg-primary">{{ user.affiliation }}</span>
-          </h3>
-        {% endif %}
+        .team-subtitle {
+            font-size: 1.1rem;
+            color: var(--color-text-muted);
+            font-weight: 300;
+        }
 
-        {% if user.country %}
-          <h3 class="d-inline-block mx-1">
-            <span class="badge rounded-pill bg-primary">
-                <i class="flag-{{ user.country.lower() }}"></i>
-                {{ lookup_country_code(user.country) }}
-            </span>
-          </h3>
-        {% endif %}
-      </div>
+        .user-profile-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
 
-      {% if user.bracket_id %}
-        <div class="pt-2">
-          <h2>
-            <span class="badge text-bg-light">
-              {{ user.bracket.name }}
-            </span>
-          </h2>
+        .user-header {
+            background: rgba(30, 30, 50, 0.9);
+            border: 2px solid rgba(255, 140, 0, 0.3);
+            border-radius: 15px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .user-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            flex-shrink: 0;
+            border: 3px solid rgba(255, 140, 0, 0.5);
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--color-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .user-meta {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .user-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--color-text-muted);
+            font-size: 1.1rem;
+        }
+
+        .user-meta-icon {
+            font-size: 1.3rem;
+        }
+
+        .user-meta-value {
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid rgba(255, 140, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .profile-section {
+            background: rgba(30, 30, 50, 0.9);
+            border: 2px solid rgba(255, 140, 0, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 140, 0, 0.1);
+            border: 2px solid rgba(255, 140, 0, 0.3);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 140, 0, 0.2);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--color-primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+        }
+
+        .solves-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .solves-table thead {
+            background: rgba(255, 140, 0, 0.1);
+        }
+
+        .solves-table th {
+            padding: 1rem;
+            text-align: left;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            color: var(--color-primary);
+            border-bottom: 2px solid rgba(255, 140, 0, 0.3);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .solves-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--color-primary);
+        }
+
+        .solves-table tbody tr:hover {
+            background: rgba(255, 140, 0, 0.05);
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: rgba(255, 140, 0, 0.2);
+            color: var(--color-primary);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-top: 2rem;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .activity-item:hover {
+            background: rgba(255, 140, 0, 0.05);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .activity-time {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+        }
+    </style>
+</head>
+<body class="user-profile-page">
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo-container">
+                <a href="index.html">
+                    <img src="assets/logos/logo-ctf.png" alt="Alquymia Logo" class="logo">
+                </a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="desafios1.html">Desafios</a></li>
+                <li><a href="classificacao.html">Classificação</a></li>
+                <li><a href="team.html">Equipes</a></li>
+                <li><a href="configuracoes.html" class="active">Perfil</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </div>
-      {% endif %}
+    </header>
 
-      <div class="pt-2">
-        {% for field in user.fields %}
-          <h3 class="d-block">
-            {{ field.name }}: {{ field.value }}
-          </h3>
-        {% endfor %}
-      </div>
-
-      {% if user.fields %}
-        <hr class="w-50 mx-auto">
-      {% endif %}
-
-      <div>
-        <h2 class="text-center">
-          {% if account.place %}
-            {{ account.place }} <small>place</small>
-          {% endif %}
-        </h2>
-        <h2 class="text-center">
-          {% if account.place %}
-            {{ account.score }} <small>points</small>
-          {% endif %}
-        </h2>
-      </div>
-
-      <div class="pt-3">
-        {% if user.website %}
-          <a href="{{ user.website }}" target="_blank" style="color: inherit;" rel="noopener">
-            <i
-                class="fas fa-external-link-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
-                title="{{ user.website }}"
-            ></i>
-          </a>
-        {% endif %}
-      </div>
+    <!-- Profile Hero -->
+    <div class="team-hero">
+        <div class="badge">4ª EDIÇÃO</div>
+        <h1 class="team-title">PERFIL DO USUÁRIO</h1>
+        <p class="team-subtitle">Visualize suas estatísticas e conquistas</p>
     </div>
-  </div>
-  <div class="container">
-    {% include "components/errors.html" %}
 
-    {% set solves = user.solves %}
-    {% set awards = user.awards %}
-    {% if solves or awards %}
-
-      {% if awards %}
-        <div class="row">
-          <div class="col-md-12">
-            <h3>{% trans %}Awards{% endtrans %}</h3>
-          </div>
-          {% for award in awards %}
-            <div class="col-md-3 col-sm-6">
-              <p class="text-center">
-                <i class="award-icon award-{{ award.icon }} fa-2x"></i>
-                <br>
-                <strong>{{ award.name }}</strong>
-              </p>
-              <p class="text-center">{{ award.category or "" }}</p>
-              <p class="text-center">{{ award.description or "" }}</p>
-              <p class="text-center">{{ award.value }}</p>
+    <!-- User Profile Section -->
+    <section class="user-profile-container">
+        <!-- User Header -->
+        <div class="user-header">
+            <div class="user-avatar">👤</div>
+            <div class="user-info">
+                <h1 class="user-name">teste_user</h1>
+                <div class="user-meta">
+                    <div class="user-meta-item">
+                        <span class="user-meta-icon">🏆</span>
+                        <span class="user-meta-value">50 pontos</span>
+                    </div>
+                    <div class="user-meta-item">
+                        <span class="user-meta-icon">👥</span>
+                        <span>Equipe: <a href="team-profile.html" class="user-meta-value" style="color: var(--color-primary); text-decoration: none;">Equipe Teste</a></span>
+                    </div>
+                    <div class="user-meta-item">
+                        <span class="user-meta-icon">📅</span>
+                        <span>Membro desde: <span class="user-meta-value">Outubro 2025</span></span>
+                    </div>
+                </div>
             </div>
-          {% endfor %}
-        </div>
-      {% endif %}
-
-      <br>
-
-      <div class="row">
-        <div class="col-md-12">
-          <h3>Solves</h3>
-          <table class="table table-striped align-middle">
-            <thead>
-            <tr>
-              <th>{% trans %}Challenge{% endtrans %}</th>
-              <th class="d-none d-md-block d-lg-block">{% trans %}Category{% endtrans %}</th>
-              <th>{% trans %}Value{% endtrans %}</th>
-              <th>{% trans %}Time{% endtrans %}</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for solve in solves %}
-              <tr>
-                <td>
-                  <a href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}-{{ solve.challenge.id }}">
-                    {{ solve.challenge.name }}
-                  </a>
-                </td>
-                <td class="d-none d-md-block d-lg-block">{{ solve.challenge.category }}</td>
-                <td>{{ solve.challenge.value }}</td>
-                <td class="solve-time">
-                  <span data-time="{{ solve.date | isoformat }}"></span>
-                </td>
-              </tr>
-            {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="clearfix"></div>
-
-      <div class="row" x-data="UserGraphs">
-        <div class="col-md-6 d-none d-md-block d-lg-block py-4">
-          <div class="progress">
-            <div 
-              class="progress-bar" 
-              role="progressbar" 
-              :style="{ width: `${getSolvePercentage()}%`, 'background-color': 'rgb(0, 209, 64)' }" 
-            >
-            </div>
-            <div 
-              class="progress-bar" 
-              role="progressbar" 
-              :style="{ width: `${getFailPercentage()}%`, 'background-color': 'rgb(207, 38, 0)' }"
-            >
-            </div>
-          </div>
-          <div class="ps-2 float-start">
-            <svg height="16" width="16">
-              <circle cx="8" cy="8" r="5" fill="rgb(0, 209, 64)" />
-            </svg>
-            <small x-text="`Solves (${getSolvePercentage()}%)`"></small>
-          </div>
-          <div class="ps-2 float-start">
-            <svg height="16" width="16">
-              <circle cx="8" cy="8" r="5" fill="rgb(207, 38, 0)" />
-            </svg>
-            <small x-text="`Fails (${getFailPercentage()}%)`"></small>
-          </div>
-        </div>
-        <div class="col-md-6 d-none d-md-block d-lg-block py-4">
-          <div class="progress">
-            <template x-for="category in getCategoryBreakdown()" :key="category.name">
-              <div 
-                class="progress-bar" 
-                role="progressbar" 
-                :style="{ width: `${category.percent}%`, 'background-color': category.color }"
-              >
-              </div>
-            </template>
-          </div>
-          <template x-for="category in getCategoryBreakdown()" :key="category.name">
-            <div class="ps-2 float-start">
-              <svg height="16" width="16">
-                <circle cx="8" cy="8" r="5" :fill="category.color" />
-              </svg>
-              <small x-text="`${category.name} (${category.percent}%)`"></small>
-            </div>
-          </template>
         </div>
 
-        <br class="clearfix">
-
-        <div class="col-md-12 d-none d-md-block d-lg-block py-4">
-          <div id="score-graph" x-ref="scoregraph" class="w-100 d-flex align-items-center">
-            <div class="text-center w-100">
-              <i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+        <!-- Statistics Section -->
+        <div class="profile-section">
+            <h2 class="section-title">📊 Estatísticas</h2>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-value">1</div>
+                    <div class="stat-label">Desafios Resolvidos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">Taxa de Sucesso</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-value">5m</div>
+                    <div class="stat-label">Tempo Médio</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🔥</div>
+                    <div class="stat-value">1</div>
+                    <div class="stat-label">Sequência Atual</div>
+                </div>
             </div>
-          </div>
+
+            <div class="chart-container">
+                <canvas id="scoreChart"></canvas>
+            </div>
         </div>
-      </div>
-    {% else %}
-      <div class="row min-vh-25">
-        <h3 class="opacity-50 text-center w-100 justify-content-center align-self-center">
-          {% trans %}No solves yet{% endtrans %}
-        </h3>
-      </div>
-    {% endif %}
-  </div>
-{% endblock %}
 
-{% block scripts %}
-  <script>
-      window.USER = {{ {
-      'type': 'user',
-      'id': user.id,
-      'name': user.name,
-      'account_id': user.id,
-    } | tojson }};
-  </script>
+        <!-- Solves Section -->
+        <div class="profile-section">
+            <h2 class="section-title">🚩 Desafios Resolvidos</h2>
+            <table class="solves-table">
+                <thead>
+                    <tr>
+                        <th>Desafio</th>
+                        <th>Categoria</th>
+                        <th>Pontos</th>
+                        <th>Data/Hora</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>QR Code Escondido</td>
+                        <td><span class="category-badge">MISC</span></td>
+                        <td>50</td>
+                        <td>26 de Outubro, 00:25:55</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-  {{ Assets.js("assets/js/users/public.js") }}
-{% endblock %}
+        <!-- Activity Section -->
+        <div class="profile-section">
+            <h2 class="section-title">📈 Atividade Recente</h2>
+            
+            <div class="activity-item">
+                <div class="activity-icon">🎉</div>
+                <div class="activity-content">
+                    <div class="activity-title">Resolveu o desafio "QR Code Escondido"</div>
+                    <div class="activity-time">26 de Outubro, 00:25:55</div>
+                </div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-icon">👥</div>
+                <div class="activity-content">
+                    <div class="activity-title">Entrou na equipe "Equipe Teste"</div>
+                    <div class="activity-time">26 de Outubro, 00:20:00</div>
+                </div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-icon">🚀</div>
+                <div class="activity-content">
+                    <div class="activity-title">Registrou-se no CTF Alquymia 2025</div>
+                    <div class="activity-time">26 de Outubro, 00:15:00</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+    <script src="chart-init.js"></script>
+    <script>
+        // Inicializar gráfico de pontuação ao longo do tempo
+        const ctx = document.getElementById('scoreChart').getContext('2d');
+        const scoreChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['26 Out 00:15', '26 Out 00:20', '26 Out 00:25'],
+                datasets: [{
+                    label: 'Pontuação',
+                    data: [0, 0, 50],
+                    borderColor: '#FF8C00',
+                    backgroundColor: 'rgba(255, 140, 0, 0.1)',
+                    borderWidth: 3,
+                    pointRadius: 6,
+                    pointBackgroundColor: '#FF8C00',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Progresso ao Longo do Tempo',
+                        color: '#888',
+                        font: {
+                            size: 16,
+                            family: 'Orbitron'
+                        }
+                    },
+                    legend: {
+                        display: true,
+                        labels: {
+                            color: '#FF8C00',
+                            font: {
+                                family: 'Rajdhani'
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#888',
+                            font: {
+                                family: 'Rajdhani'
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#888',
+                            font: {
+                                family: 'Rajdhani'
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+    <script src="particles-canvas.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+
