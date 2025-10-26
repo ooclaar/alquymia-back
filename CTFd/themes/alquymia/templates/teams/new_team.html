@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+.create-team-container {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem 1rem;
+}
+
+.create-team-card {
+    background: rgba(15, 23, 42, 0.9);
+    border: 2px solid rgba(0, 212, 255, 0.3);
+    border-radius: 20px;
+    padding: 3rem;
+    max-width: 550px;
+    width: 100%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.create-team-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.5rem;
+    color: #00d4ff;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+.create-team-subtitle {
+    color: #94a3b8;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+}
+
+.info-box {
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    color: #94a3b8;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.info-box strong {
+    color: #00d4ff;
+}
+
+.form-label {
+    color: #ffffff;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.form-control {
+    background: rgba(30, 41, 59, 0.8);
+    border: 2px solid rgba(148, 163, 184, 0.3);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    color: #ffffff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    background: rgba(30, 41, 59, 0.9);
+    border-color: #00d4ff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 212, 255, 0.25);
+    color: #ffffff;
+}
+
+.form-control::placeholder {
+    color: #64748b;
+}
+
+.btn-create {
+    background: linear-gradient(135deg, #00d4ff 0%, #00a8cc 100%);
+    border: none;
+    color: #ffffff;
+    padding: 0.875rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.btn-create:hover {
+    background: linear-gradient(135deg, #00a8cc 0%, #007c99 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 212, 255, 0.4);
+    color: #ffffff;
+}
+
+.btn-back {
+    background: transparent;
+    border: 2px solid #64748b;
+    color: #94a3b8;
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 1rem;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-back:hover {
+    border-color: #ff6b35;
+    color: #ff6b35;
+    background: rgba(255, 107, 53, 0.1);
+    text-decoration: none;
+}
+
+.mb-3 {
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .create-team-title {
+        font-size: 2rem;
+    }
+    
+    .create-team-card {
+        padding: 2rem 1.5rem;
+    }
+}
+</style>
+
+<div class="create-team-container">
+    <div class="create-team-card">
+        <h1 class="create-team-title">➕ Criar Equipe</h1>
+        <p class="create-team-subtitle">Monte sua própria equipe</p>
+        
+        <div class="info-box">
+            <strong>💡 Dica:</strong> Após criar sua equipe, compartilhe o nome e a senha com seus colegas para que eles possam se juntar!
+        </div>
+        
+        {% include "components/errors.html" %}
+
+        {% with form = Forms.teams.TeamRegisterForm() %}
+          {% from "macros/forms.html" import render_extra_fields %}
+          <form method="POST">
+            <div class="mb-3">
+              {{ form.name.label(class="form-label") }}
+              {{ form.name(class="form-control", placeholder="Escolha um nome único para sua equipe") }}
+            </div>
+            
+            <div class="mb-3">
+              {{ form.password.label(class="form-label") }}
+              {{ form.password(class="form-control", placeholder="Crie uma senha para sua equipe") }}
+            </div>
+
+            {{ render_extra_fields(form.extra) }}
+
+            {{ form.submit(class="btn-create", value="Criar Equipe") }}
+            {{ form.nonce() }}
+          </form>
+        {% endwith %}
+        
+        <a href="{{ url_for('challenges.listing') }}" class="btn-back">
+            ← Voltar
+        </a>
+    </div>
+</div>
+{% endblock %}
+

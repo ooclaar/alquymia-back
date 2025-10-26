@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-badge" data-aos="fade-down">
+            <span class="badge-text">{{ Configs.ctf_name }}</span>
+        </div>
+        <h1 class="hero-title" data-aos="fade-up" data-aos-delay="200">
+            BEM-VINDO AO<br>
+            <span class="highlight">{{ Configs.ctf_name }}</span>
+        </h1>
+        <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="400">
+            {{ Configs.ctf_description or "UM CTF FEITO DA COMUNIDADE PARA A COMUNIDADE" }}
+        </p>
+        <div class="hero-cta" data-aos="fade-up" data-aos-delay="600">
+            {% if User.id %}
+                <a href="{{ url_for('challenges.listing') }}" class="btn btn-primary">
+                    <span>VER DESAFIOS</span>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
+                <a href="{{ url_for('scoreboard.listing') }}" class="btn btn-secondary">VER CLASSIFICAÇÃO</a>
+            {% else %}
+                <a href="{{ url_for('auth.register') }}" class="btn btn-primary">
+                    <span>INSCREVA-SE AGORA</span>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
+                <a href="#sobre" class="btn btn-secondary">SAIBA MAIS</a>
+            {% endif %}
+        </div>
+        {% if Configs.start and Configs.end %}
+        <div class="hero-stats" data-aos="fade-up" data-aos-delay="800">
+            <div class="stat-item">
+                <div class="stat-number">{{ Configs.start.strftime('%d/%m') }}</div>
+                <div class="stat-label">Início: {{ Configs.start.strftime('%Hh') }}</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <div class="stat-number">{{ Configs.end.strftime('%d/%m') }}</div>
+                <div class="stat-label">Fim: {{ Configs.end.strftime('%Hh') }}</div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <div class="hero-scroll">
+        <div class="scroll-indicator">
+            <span></span>
+        </div>
+    </div>
+</section>
+
+<!-- Sobre a Comunidade -->
+<section id="sobre" class="section section-about">
+    <div class="container">
+        <div class="section-header" data-aos="fade-up">
+            <span class="section-tag">QUEM SOMOS</span>
+            <h2 class="section-title">{{ Configs.ctf_name }}</h2>
+        </div>
+        <div class="about-content">
+            <div class="about-text" data-aos="fade-right">
+                <p>
+                    {{ Configs.ctf_description or "Somos uma comunidade brasileira de elite em segurança da informação, movida pela paixão de transformar vidas com conhecimento em Cyber Segurança." }}
+                </p>
+                <div class="about-features">
+                    <div class="feature-item">
+                        <div class="feature-icon">🎯</div>
+                        <div class="feature-text">
+                            <h4>Aprendizado Prático</h4>
+                            <p>Exercícios hands-on e desafios reais</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🤝</div>
+                        <div class="feature-text">
+                            <h4>Comunidade Ativa</h4>
+                            <p>Network com profissionais de todo Brasil</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🚀</div>
+                        <div class="feature-text">
+                            <h4>Crescimento Contínuo</h4>
+                            <p>Eventos, workshops e competições regulares</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="about-visual" data-aos="fade-left">
+                <div class="visual-card">
+                    <div class="card-glow"></div>
+                    <div class="card-content">
+                        <div class="terminal-header">
+                            <span class="terminal-dot red"></span>
+                            <span class="terminal-dot yellow"></span>
+                            <span class="terminal-dot green"></span>
+                        </div>
+                        <div class="terminal-body">
+                            <p><span class="prompt">$</span> whoami</p>
+                            <p class="output">{{ Configs.ctf_name }}</p>
+                            <p><span class="prompt">$</span> cat mission.txt</p>
+                            <p class="output">Transformar vidas através do</p>
+                            <p class="output">conhecimento em Cyber Segurança</p>
+                            <p><span class="prompt cursor">█</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- O Evento -->
+<section id="evento" class="section section-event">
+    <div class="container">
+        <div class="section-header" data-aos="fade-up">
+            <span class="section-tag">{{ Configs.ctf_name }}</span>
+            <h2 class="section-title">O Campo de Batalha Supremo</h2>
+            <p class="section-description">
+                Prepare-se para uma competição intensa onde suas habilidades em segurança cibernética 
+                serão desafiadas ao máximo. Teste seus conhecimentos, supere os concorrentes e mostre 
+                que você está entre os melhores.
+            </p>
+        </div>
+        <div class="event-grid">
+            <div class="event-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="event-card-icon">🔐</div>
+                <h3>Criptografia</h3>
+                <p>Decifre códigos complexos, quebre cifras e domine técnicas de criptoanálise.</p>
+            </div>
+            <div class="event-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="event-card-icon">🌐</div>
+                <h3>Web Exploitation</h3>
+                <p>Explore vulnerabilidades em aplicações web, desde SQL Injection até XSS.</p>
+            </div>
+            <div class="event-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="event-card-icon">🔍</div>
+                <h3>Análise Forense</h3>
+                <p>Investigue evidências digitais, analise logs e descubra pistas escondidas.</p>
+            </div>
+            <div class="event-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="event-card-icon">🖼️</div>
+                <h3>Esteganografia</h3>
+                <p>Encontre mensagens ocultas em imagens, áudios e vídeos.</p>
+            </div>
+            <div class="event-card" data-aos="fade-up" data-aos-delay="500">
+                <div class="event-card-icon">⚙️</div>
+                <h3>Reverse Engineering</h3>
+                <p>Desmonte binários, analise código assembly e descubra como programas funcionam.</p>
+            </div>
+            <div class="event-card" data-aos="fade-up" data-aos-delay="600">
+                <div class="event-card-icon">🎯</div>
+                <h3>MISC</h3>
+                <p>Desafios diversos que testam sua criatividade e pensamento lateral.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Smooth scroll para âncoras
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
+

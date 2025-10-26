@@ -1,0 +1,476 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Partículas de fundo -->
+<div id="particles-container"></div>
+
+<!-- Hero Section -->
+<section class="challenges-hero">
+    <div class="container">
+        <span class="badge">4ª EDIÇÃO</span>
+        <h1 class="glitch" data-text="DESAFIOS CTF 2025">DESAFIOS CTF 2025</h1>
+        <p class="subtitle">Explore os desafios divididos por categoria e teste suas habilidades</p>
+        <div class="hero-stats">
+            <div class="stat-item">
+                <span class="stat-number" id="total-challenges">18+</span>
+                <span class="stat-label">Desafios</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">6</span>
+                <span class="stat-label">Categorias</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="total-points">3850+</span>
+                <span class="stat-label">Pontos</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Filtros de Categoria -->
+<section class="category-filters">
+    <div class="container">
+        <button class="filter-btn active" data-category="all">🎯 Todos</button>
+        <button class="filter-btn" data-category="Crypto">🔐 Criptografia</button>
+        <button class="filter-btn" data-category="Web">🌐 Web</button>
+        <button class="filter-btn" data-category="Forensics">🔍 Forense</button>
+        <button class="filter-btn" data-category="Stego">🖼️ Esteganografia</button>
+        <button class="filter-btn" data-category="Reverse">⚙️ Reversing</button>
+        <button class="filter-btn" data-category="MISC">🎲 MISC</button>
+    </div>
+</section>
+
+<!-- Grid de Desafios -->
+<section class="challenges-grid">
+    <div class="container" id="challenges-container">
+        <!-- Os desafios serão carregados aqui via JavaScript -->
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Carregando desafios...</p>
+        </div>
+    </div>
+</section>
+
+<!-- Modal de Detalhes do Desafio -->
+<div id="challengeModal" class="challenge-modal">
+    <div class="challenge-modal-content">
+        <span class="challenge-modal-close" onclick="closeChallengeModal()">&times;</span>
+        
+        <div class="challenge-modal-header">
+            <div class="challenge-modal-badges">
+                <span class="challenge-modal-category"></span>
+                <span class="challenge-modal-difficulty"></span>
+                <span class="challenge-modal-solved" style="display: none;">✓ RESOLVIDO</span>
+            </div>
+            <h2 class="challenge-modal-title"></h2>
+            <div class="challenge-modal-meta">
+                <span class="challenge-modal-points"></span>
+                <span class="challenge-modal-solves"></span>
+            </div>
+        </div>
+
+        <div class="challenge-modal-body">
+            <div class="challenge-modal-section">
+                <h4>📄 Descrição</h4>
+                <div class="challenge-modal-description"></div>
+            </div>
+            
+            <div class="challenge-modal-section challenge-modal-files" style="display: none;">
+                <h4>📁 Arquivos</h4>
+                <div class="challenge-files-list"></div>
+            </div>
+
+            <div class="challenge-modal-section challenge-modal-connection" style="display: none;">
+                <h4>🔗 Informações de Conexão</h4>
+                <div class="challenge-connection-info"></div>
+            </div>
+
+            <div class="challenge-modal-section challenge-modal-hints" style="display: none;">
+                <h4>💡 Dicas</h4>
+                <div class="challenge-hints-list"></div>
+            </div>
+
+            <div class="challenge-modal-section challenge-modal-tags" style="display: none;">
+                <h4>🏷️ Tags</h4>
+                <div class="challenge-tags-list"></div>
+            </div>
+        </div>
+
+        <div class="challenge-modal-footer">
+            <div class="challenge-flag-submission">
+                <h4>🚩 Submeter Flag</h4>
+                <form class="flag-form" id="modalFlagForm">
+                    <div class="flag-input-group">
+                        <input type="text" id="flagInput" placeholder="Digite a flag aqui..." class="flag-input" autocomplete="off">
+                        <button type="submit" class="flag-submit-btn">
+                            <span class="btn-text">SUBMETER</span>
+                            <span class="btn-loading" style="display: none;">
+                                <div class="btn-spinner"></div>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="flag-feedback"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Mapeamento de categorias para ícones e cores
+const categoryConfig = {
+    'Crypto': { icon: '🔐', name: 'Criptografia', class: 'crypto' },
+    'Web': { icon: '🌐', name: 'Web', class: 'web' },
+    'Forensics': { icon: '🔍', name: 'Forense', class: 'forensics' },
+    'Stego': { icon: '🖼️', name: 'Esteganografia', class: 'stego' },
+    'Reverse': { icon: '⚙️', name: 'Reversing', class: 'reverse' },
+    'MISC': { icon: '🎲', name: 'MISC', class: 'misc' }
+};
+
+// Armazenar dados dos desafios
+let challengesData = {};
+
+// Função para obter o token CSRF
+function getCSRFToken() {
+    return document.querySelector('meta[name="csrf-token"]')?.content || '';
+}
+
+// Função para buscar todos os desafios
+async function fetchChallenges() {
+    try {
+        const response = await fetch('/api/v1/challenges');
+        const data = await response.json();
+        return data.success ? data.data : [];
+    } catch (error) {
+        console.error('Erro ao buscar desafios:', error);
+        return [];
+    }
+}
+
+// Função para determinar a dificuldade baseada nos pontos
+function getDifficulty(points) {
+    if (points <= 100) return { level: 'easy', label: 'FÁCIL' };
+    if (points <= 250) return { level: 'medium', label: 'MÉDIO' };
+    return { level: 'hard', label: 'DIFÍCIL' };
+}
+
+// Função para criar um card de desafio
+function createChallengeCard(challenge) {
+    const category = challenge.category || 'MISC';
+    const config = categoryConfig[category] || categoryConfig['MISC'];
+    const difficulty = getDifficulty(challenge.value);
+    
+    const card = document.createElement('div');
+    card.className = `challenge-card ${challenge.solved_by_me ? 'solved' : ''}`;
+    card.dataset.category = category;
+    card.dataset.difficulty = difficulty.level;
+    card.dataset.challengeId = challenge.id;
+    
+    card.innerHTML = `
+        <div class="card-header">
+            <span class="category-badge ${config.class}">${config.icon} ${config.name}</span>
+            <span class="difficulty ${difficulty.level}">${difficulty.label}</span>
+        </div>
+        <h3 class="challenge-title">${challenge.name}</h3>
+        <p class="challenge-description">${challenge.description || 'Sem descrição disponível'}</p>
+        <div class="card-footer">
+            <span class="points">${challenge.value} pontos</span>
+            <span class="solves">${challenge.solves || 0} resoluções</span>
+        </div>
+    `;
+    
+    // Adicionar evento de clique para abrir modal
+    card.addEventListener('click', () => {
+        openChallengeModal(challenge);
+    });
+    
+    return card;
+}
+
+// Função para abrir o modal do desafio
+function openChallengeModal(challenge) {
+    const modal = document.getElementById('challengeModal');
+    const category = challenge.category || 'MISC';
+    const config = categoryConfig[category] || categoryConfig['MISC'];
+    const difficulty = getDifficulty(challenge.value);
+    
+    // Armazenar ID do desafio atual
+    modal.dataset.currentChallengeId = challenge.id;
+    
+    // Preencher badges
+    const categoryBadge = document.querySelector('.challenge-modal-category');
+    categoryBadge.textContent = `${config.icon} ${config.name}`;
+    categoryBadge.className = `challenge-modal-category category-badge ${config.class}`;
+    
+    const difficultyBadge = document.querySelector('.challenge-modal-difficulty');
+    difficultyBadge.textContent = difficulty.label;
+    difficultyBadge.className = `challenge-modal-difficulty difficulty ${difficulty.level}`;
+    
+    // Badge de resolvido
+    const solvedBadge = document.querySelector('.challenge-modal-solved');
+    if (challenge.solved_by_me) {
+        solvedBadge.style.display = 'inline-block';
+    } else {
+        solvedBadge.style.display = 'none';
+    }
+    
+    // Preencher título e meta
+    document.querySelector('.challenge-modal-title').textContent = challenge.name;
+    document.querySelector('.challenge-modal-points').textContent = `🏆 ${challenge.value} pontos`;
+    document.querySelector('.challenge-modal-solves').textContent = `👥 ${challenge.solves || 0} resoluções`;
+    
+    // Preencher descrição
+    document.querySelector('.challenge-modal-description').textContent = challenge.description || 'Sem descrição disponível';
+    
+    // Preencher arquivos
+    const filesSection = document.querySelector('.challenge-modal-files');
+    const filesList = document.querySelector('.challenge-files-list');
+    if (challenge.files && challenge.files.length > 0) {
+        filesSection.style.display = 'block';
+        filesList.innerHTML = challenge.files.map(file => `
+            <div class="challenge-file-item">
+                <div class="challenge-file-info">
+                    <span class="challenge-file-icon">📄</span>
+                    <div class="challenge-file-name">${file.split('/').pop()}</div>
+                </div>
+                <a href="${file}" target="_blank" class="challenge-file-download">
+                    ⬇️ Download
+                </a>
+            </div>
+        `).join('');
+    } else {
+        filesSection.style.display = 'none';
+    }
+    
+    // Preencher informações de conexão
+    const connectionSection = document.querySelector('.challenge-modal-connection');
+    const connectionInfo = document.querySelector('.challenge-connection-info');
+    if (challenge.connection_info) {
+        connectionSection.style.display = 'block';
+        connectionInfo.innerHTML = `<code>${challenge.connection_info}</code>`;
+    } else {
+        connectionSection.style.display = 'none';
+    }
+    
+    // Preencher tags
+    const tagsSection = document.querySelector('.challenge-modal-tags');
+    const tagsList = document.querySelector('.challenge-tags-list');
+    if (challenge.tags && challenge.tags.length > 0) {
+        tagsSection.style.display = 'block';
+        tagsList.innerHTML = challenge.tags.map(tag => {
+            // Tag pode ser string ou objeto {value: "nome"}
+            const tagName = typeof tag === 'string' ? tag : (tag.value || tag.name || tag);
+            return `<span class="tag">${tagName}</span>`;
+        }).join('');
+    } else {
+        tagsSection.style.display = 'none';
+    }
+    
+    // Limpar formulário
+    document.getElementById('flagInput').value = '';
+    const feedback = document.querySelector('.flag-feedback');
+    feedback.textContent = '';
+    feedback.className = 'flag-feedback';
+    feedback.style.display = 'none';
+    
+    // Desabilitar formulário se já resolvido
+    const flagInput = document.getElementById('flagInput');
+    const submitBtn = document.querySelector('.flag-submit-btn');
+    if (challenge.solved_by_me) {
+        flagInput.disabled = true;
+        submitBtn.disabled = true;
+        submitBtn.querySelector('.btn-text').textContent = 'JÁ RESOLVIDO';
+    } else {
+        flagInput.disabled = false;
+        submitBtn.disabled = false;
+        submitBtn.querySelector('.btn-text').textContent = 'SUBMETER';
+    }
+    
+    // Mostrar modal
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+// Função para fechar o modal
+function closeChallengeModal() {
+    const modal = document.getElementById('challengeModal');
+    modal.classList.remove('show');
+    document.body.style.overflow = 'auto';
+}
+
+// Função para submeter a flag
+async function submitFlag(e) {
+    e.preventDefault();
+    
+    const modal = document.getElementById('challengeModal');
+    const challengeId = modal.dataset.currentChallengeId;
+    const input = document.getElementById('flagInput');
+    const submitBtn = document.querySelector('.flag-submit-btn');
+    const btnText = submitBtn.querySelector('.btn-text');
+    const btnLoading = submitBtn.querySelector('.btn-loading');
+    const feedback = document.querySelector('.flag-feedback');
+    
+    const submission = input.value.trim();
+    
+    if (!submission) {
+        showFeedback(feedback, '⚠️ Por favor, digite uma flag', 'error');
+        return;
+    }
+    
+    // Mostrar loading
+    btnText.style.display = 'none';
+    btnLoading.style.display = 'inline-block';
+    submitBtn.disabled = true;
+    
+    try {
+        // Pegar o token CSRF do meta tag
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+        console.log('CSRF Token:', csrfToken);
+        
+        const response = await fetch('/api/v1/challenges/attempt', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'CSRF-Token': csrfToken
+            },
+            body: JSON.stringify({
+                challenge_id: parseInt(challengeId),
+                submission: submission
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            const status = result.data.status;
+            
+            if (status === 'correct') {
+                showFeedback(feedback, '🎉 Flag correta! Parabéns!', 'success');
+                input.value = '';
+                
+                // Marcar como resolvido
+                document.querySelector('.challenge-modal-solved').style.display = 'inline-block';
+                input.disabled = true;
+                submitBtn.disabled = true;
+                btnText.textContent = 'JÁ RESOLVIDO';
+                
+                // Atualizar card
+                const card = document.querySelector(`[data-challenge-id="${challengeId}"]`);
+                if (card) {
+                    card.classList.add('solved');
+                }
+                
+                // Recarregar após 2 segundos
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+            } else if (status === 'incorrect') {
+                showFeedback(feedback, '❌ Flag incorreta. Tente novamente!', 'error');
+                input.value = '';
+                input.focus();
+            } else {
+                showFeedback(feedback, `ℹ️ ${result.data.message || 'Status desconhecido'}`, 'info');
+            }
+        } else {
+            showFeedback(feedback, `❌ ${result.errors ? result.errors.join(', ') : 'Erro ao submeter flag'}`, 'error');
+        }
+    } catch (error) {
+        console.error('Erro ao submeter flag:', error);
+        showFeedback(feedback, '❌ Erro de conexão. Tente novamente.', 'error');
+    } finally {
+        // Esconder loading
+        btnText.style.display = 'inline';
+        btnLoading.style.display = 'none';
+        if (!input.disabled) {
+            submitBtn.disabled = false;
+        }
+    }
+}
+
+// Função para mostrar feedback
+function showFeedback(feedbackElement, message, type) {
+    feedbackElement.textContent = message;
+    feedbackElement.className = `flag-feedback ${type}`;
+    feedbackElement.style.display = 'block';
+}
+
+// Função para renderizar os desafios
+function renderChallenges(challenges) {
+    const container = document.getElementById('challenges-container');
+    container.innerHTML = '';
+    
+    if (challenges.length === 0) {
+        container.innerHTML = '<p class="no-challenges">Nenhum desafio disponível no momento.</p>';
+        return;
+    }
+    
+    challenges.forEach(challenge => {
+        challengesData[challenge.id] = challenge;
+        const card = createChallengeCard(challenge);
+        container.appendChild(card);
+    });
+    
+    // Atualizar estatísticas
+    const totalPoints = challenges.reduce((sum, ch) => sum + ch.value, 0);
+    document.getElementById('total-challenges').textContent = challenges.length + '+';
+    document.getElementById('total-points').textContent = totalPoints + '+';
+}
+
+// Função para filtrar desafios
+function filterChallenges(category) {
+    const cards = document.querySelectorAll('.challenge-card');
+    
+    cards.forEach(card => {
+        if (category === 'all' || card.dataset.category === category) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+// Inicializar quando o DOM estiver pronto
+document.addEventListener('DOMContentLoaded', async () => {
+    // Buscar e renderizar desafios
+    const challenges = await fetchChallenges();
+    renderChallenges(challenges);
+    
+    // Adicionar event listeners aos filtros
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Remover active de todos os botões
+            filterButtons.forEach(b => b.classList.remove('active'));
+            
+            // Adicionar active ao botão clicado
+            btn.classList.add('active');
+            
+            // Filtrar desafios
+            const category = btn.dataset.category;
+            filterChallenges(category);
+        });
+    });
+    
+    // Event listener para o formulário do modal
+    document.getElementById('modalFlagForm').addEventListener('submit', submitFlag);
+    
+    // Fechar modal ao clicar fora
+    document.getElementById('challengeModal').addEventListener('click', (e) => {
+        if (e.target.id === 'challengeModal') {
+            closeChallengeModal();
+        }
+    });
+    
+    // Fechar modal com ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeChallengeModal();
+        }
+    });
+});
+</script>
+{% endblock %}
+

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{{ super() }}
+<style>
+    body {
+        background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+    }
+    .auth-page-container {
+        min-height: calc(100vh - 200px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-page-container">
+    <main class="auth-container">
+        <div class="auth-box">
+            <div class="auth-header">
+                <h1>Criar Conta</h1>
+                <p>Registre-se para participar do {{ Configs.ctf_name }}</p>
+            </div>
+            
+            {% include "components/errors.html" %}
+            
+            {% if integrations.mlc() %}
+            <a class="btn btn-secondary btn-lg btn-block w-100" href="{{ url_for('auth.oauth_login') }}" style="margin-bottom: 1.5rem;">
+                Registrar com Major League Cyber
+            </a>
+            <div class="form-divider">
+                <span>ou</span>
+            </div>
+            {% endif %}
+            
+            {% with form = Forms.auth.RegistrationForm() %}
+            {% from "macros/forms.html" import render_extra_fields %}
+            
+            <form method="post" accept-charset="utf-8" class="auth-form" id="registerForm">
+                <div class="form-group">
+                    <label for="name">{{ form.name.label.text }}</label>
+                    {{ form.name(class="form-control", id="name", placeholder="Seu nome de usuário", value=name, autocomplete="username") }}
+                    <small class="form-text text-muted">Seu nome de usuário no site</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">{{ form.email.label.text }}</label>
+                    {{ form.email(class="form-control", id="email", placeholder="seu@email.com", value=email, autocomplete="email") }}
+                    <small class="form-text text-muted">Nunca será exibido publicamente</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">{{ form.password.label.text }}</label>
+                    {{ form.password(class="form-control", id="password", placeholder="••••••••", value=password, autocomplete="new-password") }}
+                    <small class="form-text text-muted">Senha usada para acessar sua conta</small>
+                </div>
+                
+                {{ form.nonce() }}
+                
+                {{ render_extra_fields(form.extra) }}
+                
+                {% if Configs.tos_or_privacy %}
+                <div class="form-options">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="terms" required>
+                        <span>Aceito os 
+                            {% if Configs.tos_link %}
+                            <a href="{{ Configs.tos_link }}" target="_blank" class="link-secondary">termos de serviço</a>
+                            {% endif %}
+                            {% if Configs.tos_link and Configs.privacy_link %}e{% endif %}
+                            {% if Configs.privacy_link %}
+                            <a href="{{ Configs.privacy_link }}" target="_blank" class="link-secondary">política de privacidade</a>
+                            {% endif %}
+                        </span>
+                    </label>
+                </div>
+                {% endif %}
+                
+                <button type="submit" class="btn btn-primary btn-block">
+                    <span>CRIAR CONTA</span>
+                </button>
+            </form>
+            {% endwith %}
+            
+            <div class="form-divider">
+                <span>ou</span>
+            </div>
+            
+            <p class="form-footer">
+                Já tem uma conta? <a href="{{ url_for('auth.login') }}">Faça login</a>
+            </p>
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Adicionar classe ao body para estilização específica
+        document.body.classList.add('auth-page');
+    });
+</script>
+{% endblock %}
+

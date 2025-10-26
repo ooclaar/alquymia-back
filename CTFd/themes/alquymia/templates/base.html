@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ Configs.ctf_description or 'CTF Alquymia 2025 - O campo de batalha supremo para entusiastas da segurança cibernética.' }}">
+    <title>{{ title or Configs.ctf_name }}</title>
+    <link rel="shortcut icon" href="{{ Configs.ctf_small_icon }}" type="image/x-icon">
+    
+    {{ meta | safe }}
+    <meta name="csrf-token" content="{{ Session.nonce }}">
+    
+    <!-- Fontes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS do tema Alquymia -->
+    <link rel="stylesheet" href="/themes/alquymia/static/css/styles.css">
+    <link rel="stylesheet" href="/themes/alquymia/static/css/footer-fix.css">
+    
+    {% block stylesheets %}
+    {% endblock %}
+    
+    {{ Plugins.styles }}
+    
+    <script type="text/javascript">
+        window.init = {
+            'urlRoot': "{{ request.script_root }}",
+            'csrfNonce': "{{ Session.nonce }}",
+            'userMode': "{{ Configs.user_mode }}",
+            'userId': {{ Session.id }},
+            'userName': {{ User.name | tojson }},
+            'userEmail': {{ User.email | tojson }},
+            'userVerified': {{ User.verified | tojson }},
+            'teamId': {{ Team.id | tojson }},
+            'teamName': {{ Team.name | tojson }},
+            'start': {{ Configs.start | tojson }},
+            'end': {{ Configs.end | tojson }},
+            'themeSettings': {{ Configs.theme_settings | tojson }},
+        }
+    </script>
+    
+    {{ Configs.theme_header }}
+</head>
+<body>
+    <!-- Partículas de fundo animadas -->
+    <div id="particles-container"></div>
+
+    <!-- Header com navegação -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo-container">
+                {% if Configs.ctf_logo %}
+                    <img src="{{ Configs.ctf_logo }}" alt="{{ Configs.ctf_name }}" class="logo">
+                {% else %}
+                    <img src="/themes/alquymia/static/logos/alquymia_logo.webp" alt="Alquymia Logo" class="logo">
+                {% endif %}
+            </div>
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('views.static_html') }}">Início</a></li>
+                {% if User.id %}
+                    <li><a href="{{ url_for('challenges.listing') }}">Desafios</a></li>
+                    <li><a href="{{ url_for('scoreboard.listing') }}">Classificação</a></li>
+                    {% if Configs.user_mode == 'teams' %}
+                        <li><a href="{{ url_for('teams.listing') }}">Equipes</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('users.listing') }}">Usuários</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('views.settings') }}">Perfil</a></li>
+                    {% if User and User.is_admin and User.is_admin() %}
+                        <li><a href="{{ url_for('admin.view') }}" class="btn-inscricao">Admin</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('auth.logout') }}">Sair</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+                    <li><a href="{{ url_for('auth.register') }}" class="btn-inscricao">Inscreva-se</a></li>
+                {% endif %}
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Conteúdo principal -->
+    <main role="main">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-section">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="/themes/alquymia/static/logos/alquymia_logo.webp" alt="Alquymia Logo">
+                    <p>Transformando vidas através do conhecimento em Cyber Segurança</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Links Rápidos</h4>
+                    <ul>
+                        <li><a href="{{ url_for('views.static_html') }}">Início</a></li>
+                        {% if User.id %}
+                            <li><a href="{{ url_for('challenges.listing') }}">Desafios</a></li>
+                            <li><a href="{{ url_for('scoreboard.listing') }}">Classificação</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="footer-social">
+                    <h4>Redes Sociais</h4>
+                    <div class="social-icons">
+                        <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Alquymia Community. Todos os direitos reservados.</p>
+                <p><a href="https://ctfd.io" class="text-secondary">Powered by CTFd</a></p>
+            </div>
+        </div>
+    </footer>
+
+    {% include "components/notifications.html" %}
+
+    <!-- Scripts -->
+    {% block scripts %}
+        {{ Assets.js("assets/js/page.js") }}
+    {% endblock %}
+    
+    <script src="/themes/alquymia/static/js/script.js"></script>
+    
+    {{ Plugins.scripts }}
+    
+    {{ Configs.theme_footer }}
+    
+    <script>
+        // Centralizar modal quando aberto
+        function centerModal() {
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    const modal = document.querySelector('.modal.show');
+                    if (modal) {
+                        modal.style.display = 'flex';
+                        modal.style.alignItems = 'center';
+                        modal.style.justifyContent = 'center';
+                        
+                        const modalDialog = modal.querySelector('.modal-dialog');
+                        if (modalDialog) {
+                            modalDialog.style.margin = '1.75rem auto';
+                        }
+                    }
+                });
+            });
+            
+            observer.observe(document.body, {
+                attributes: true,
+                childList: true,
+                subtree: true,
+                attributeFilter: ['class']
+            });
+        }
+        
+        // Inicializar partículas e menu mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            centerModal();
+            if (typeof initParticles === 'function') {
+                initParticles();
+            }
+            
+            // Menu mobile
+            const hamburger = document.querySelector('.hamburger');
+            const navMenu = document.querySelector('.nav-menu');
+            
+            if (hamburger && navMenu) {
+                hamburger.addEventListener('click', function() {
+                    hamburger.classList.toggle('active');
+                    navMenu.classList.toggle('active');
+                });
+                
+                // Fechar menu ao clicar em um link
+                document.querySelectorAll('.nav-menu a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        hamburger.classList.remove('active');
+                        navMenu.classList.remove('active');
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+

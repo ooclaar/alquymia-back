@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+.team-enrollment-container {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem 1rem;
+}
+
+.team-enrollment-card {
+    background: rgba(15, 23, 42, 0.8);
+    border: 2px solid rgba(255, 107, 53, 0.3);
+    border-radius: 20px;
+    padding: 3rem;
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.team-enrollment-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.5rem;
+    color: #ff6b35;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.team-enrollment-subtitle {
+    font-size: 1.3rem;
+    color: #ffffff;
+    margin-bottom: 1rem;
+}
+
+.team-enrollment-text {
+    color: #94a3b8;
+    font-size: 1.1rem;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+}
+
+.team-buttons-container {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.team-btn {
+    flex: 1;
+    min-width: 200px;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    border: 2px solid;
+}
+
+.team-btn-join {
+    background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+    color: #ffffff;
+    border-color: #ff6b35;
+}
+
+.team-btn-join:hover {
+    background: linear-gradient(135deg, #ff8c42 0%, #ffa552 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(255, 107, 53, 0.4);
+    color: #ffffff;
+}
+
+.team-btn-create {
+    background: transparent;
+    color: #00d4ff;
+    border-color: #00d4ff;
+}
+
+.team-btn-create:hover {
+    background: rgba(0, 212, 255, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
+    color: #00d4ff;
+}
+
+@media (max-width: 768px) {
+    .team-enrollment-title {
+        font-size: 2rem;
+    }
+    
+    .team-enrollment-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .team-buttons-container {
+        flex-direction: column;
+    }
+    
+    .team-btn {
+        width: 100%;
+    }
+}
+</style>
+
+<div class="team-enrollment-container">
+    <div class="team-enrollment-card">
+        <h1 class="team-enrollment-title">⚔️ Equipe</h1>
+        
+        <p class="team-enrollment-subtitle">
+            Bem-vindo ao {{ Configs.ctf_name }}!
+        </p>
+        
+        <p class="team-enrollment-text">
+            Para participar, você deve se juntar a uma equipe existente ou criar uma nova equipe.
+        </p>
+        
+        {% if integrations.mlc() %}
+            <div class="team-buttons-container mb-4">
+                <a class="team-btn team-btn-join" href="{{ url_for('auth.oauth_login') }}">
+                    🎮 Jogar com Equipe Oficial
+                </a>
+            </div>
+            
+            <div class="team-buttons-container">
+                <a class="team-btn team-btn-create" href="{{ url_for('teams.join') }}">
+                    👥 Juntar-se à Equipe Não Oficial
+                </a>
+                <a class="team-btn team-btn-create" href="{{ url_for('teams.new') }}">
+                    ➕ Criar Equipe Não Oficial
+                </a>
+            </div>
+        {% else %}
+            <div class="team-buttons-container">
+                <a class="team-btn team-btn-join" href="{{ url_for('teams.join') }}">
+                    👥 Juntar-se à Equipe
+                </a>
+                <a class="team-btn team-btn-create" href="{{ url_for('teams.new') }}">
+                    ➕ Criar Equipe
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
