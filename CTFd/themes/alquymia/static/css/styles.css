@@ -4723,3 +4723,23 @@ body {
     }
 }
 
+
+
+/* Correção para o Gráfico do Scoreboard */
+.chart-section {
+    min-height: 400px; /* Garante altura mínima para o gráfico */
+    margin-bottom: 50px;
+    display: block !important;
+}
+
+#score-graph {
+    min-height: 400px;
+}
+
+.chart-container {
+    position: relative;
+    height: 400px;
+    width: 100%;
+    margin: 0 auto;
+}
+
