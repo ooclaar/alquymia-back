@@ -386,31 +386,7 @@ body {
     padding: 0 1rem !important;
 }
 
-/* Estilos para o cronômetro */
-#countdown-container .stat-item {
-    background-color: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important; /* Removido todo o padding para compactar */
-}
-
-/* Removendo a borda e padding do stat-item do placeholder também, caso ele apareça */
-#hero-stats-placeholder .stat-item {
-    background-color: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-}
-
-#countdown-container .stat-number {
-    font-size: 3.5em !important; /* Aumentado um pouco para destaque */
-    line-height: 1em !important;
-}
-
-#countdown-container .stat-label {
-    font-size: 0.8em !important;
-    margin-top: -0.5rem;
-}   /* Reduzido o padding para diminuir a altura da caixa */
+   /* Reduzido o padding para diminuir a altura da caixa */
     padding: 0 1rem;
 }
 
