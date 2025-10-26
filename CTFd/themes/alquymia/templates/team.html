@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Equipes - CTF Alquymia 2025">
+    <title>Equipes - CTF Alquymia 2025</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(ellipse at top, #1a1a1a 0%, #0a0a0a 100%);
+        }
+        .team-selection-page {
+            min-height: 100vh;
+            background: var(--color-dark);
+            padding-top: 100px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: transparent;
+            border: 2px solid var(--color-primary);
+            color: var(--color-primary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 1.5rem;
+        }
+
+        .team-hero {
+            text-align: center;
+            padding: 3rem 2rem 2rem;
+        }
+
+        .team-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .team-subtitle {
+            font-size: 1.2rem;
+            color: var(--color-text-muted);
+            line-height: 1.6;
+        }
+
+        .team-selection-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .team-selection-card {
+            background: rgba(30, 30, 50, 0.9);
+            border: 2px solid rgba(255, 140, 0, 0.3);
+            border-radius: 15px;
+            padding: 4rem 3rem;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .team-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .team-welcome-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .team-welcome-text {
+            font-size: 1.1rem;
+            color: var(--color-text-muted);
+            margin-bottom: 3rem;
+            line-height: 1.8;
+        }
+
+        .team-buttons-container {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 3rem;
+        }
+
+        .team-btn {
+            flex: 1;
+            min-width: 280px;
+            max-width: 350px;
+            padding: 2rem 2.5rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: 10px;
+            border: 2px solid;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .team-btn:hover::before {
+            left: 100%;
+        }
+
+        .team-btn-join {
+            background: var(--gradient-primary);
+            border-color: var(--color-primary);
+            color: var(--color-dark);
+        }
+
+        .team-btn-join:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 140, 0, 0.4);
+            border-color: #ffa500;
+        }
+
+        .team-btn-create {
+            background: transparent;
+            border-color: rgba(255, 255, 255, 0.3);
+            color: var(--color-primary);
+        }
+
+        .team-btn-create:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .team-btn-icon {
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body class="team-selection-page">
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo-container">
+                <a href="index.html">
+                    <img src="assets/logos/logo-ctf.png" alt="Alquymia Logo" class="logo">
+                </a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="desafios1.html">Desafios</a></li>
+                <li><a href="classificacao.html">Classificação</a></li>
+                <li><a href="team.html" class="active">Equipes</a></li>
+                <li><a href="configuracoes.html">Perfil</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Team Hero -->
+    <div class="team-hero">
+        <div class="badge">4ª EDIÇÃO</div>
+        <h1 class="team-title">EQUIPE</h1>
+        <p class="team-subtitle">Bem-vindo ao Alquymia CTF!</p>
+    </div>
+
+    <!-- Team Selection Section -->
+    <section class="team-selection-container">
+        <div class="team-selection-card">
+            <div class="team-icon">⚔️</div>
+            <h2 class="team-welcome-title">Escolha uma opção</h2>
+            <p class="team-welcome-text">
+                Para participar, você deve se juntar a uma equipe existente ou criar uma nova equipe.
+            </p>
+
+            <div class="team-buttons-container">
+                <a href="team-join.html" class="team-btn team-btn-join">
+                    <span class="team-btn-icon">🤝</span>
+                    <span>JUNTAR-SE À EQUIPE</span>
+                </a>
+                <a href="team-create.html" class="team-btn team-btn-create">
+                    <span class="team-btn-icon">➕</span>
+                    <span>CRIAR EQUIPE</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+    <script src="particles-canvas.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+

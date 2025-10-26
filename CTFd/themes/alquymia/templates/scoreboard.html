@@ -31,7 +31,6 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h2 class="section-title">📉 Progresso de Pontuação</h2>
                 <div id="score-graph-container" class="chart-container">
                     <canvas id="score-chart"></canvas>
                     <div id="chart-loading" class="text-center py-5">
@@ -119,47 +118,117 @@
             const scoreChartContainer = document.getElementById('score-graph-container');
 
             try {
-                // 1. Busca dados do usuário logado para pegar o team_id
-                const userResponse = await fetch('/api/v1/users/me');
-                const userData = await userResponse.json();
-                
-                if (!userData.success || !userData.data.team_id) {
-                    // Se não houver equipe, não desenha o gráfico
+                // 1. Busca o scoreboard (top 10 equipes)
+                const scoreboardResponse = await fetch('/api/v1/scoreboard');
+                const scoreboardData = await scoreboardResponse.json();
+
+                if (!scoreboardData.success || scoreboardData.data.length === 0) {
+                    // Se não houver equipes, não desenha o gráfico
                     scoreChartContainer.style.display = 'none';
                     return;
                 }
 
-                const teamId = userData.data.team_id;
+                // Pega apenas as top 10 equipes
+                const top10Teams = scoreboardData.data.slice(0, 10);
 
-                // 2. Busca os solves da equipe
-                const solvesResponse = await fetch(`/api/v1/teams/${teamId}/solves`);
-                const solvesData = await solvesResponse.json();
+                // 2. Para cada equipe, busca seus solves e calcula a pontuação ao longo do tempo
+                const datasets = [];
+                const colors = [
+                    '#FF8C00', // Laranja (1º lugar)
+                    '#FFD700', // Dourado (2º lugar)
+                    '#C0C0C0', // Prata (3º lugar)
+                    '#CD7F32', // Bronze (4º lugar)
+                    '#00CED1', // Turquesa
+                    '#FF69B4', // Rosa
+                    '#32CD32', // Verde limão
+                    '#9370DB', // Roxo médio
+                    '#FF6347', // Tomate
+                    '#4169E1'  // Azul royal
+                ];
 
-                if (!solvesData.success || solvesData.data.length === 0) {
-                    // Se não houver solves, não desenha o gráfico
+                // Coletar todos os timestamps únicos para criar labels consistentes
+                const allTimestamps = new Set();
+                allTimestamps.add(0); // Ponto inicial
+
+                // Busca solves de cada equipe
+                const teamsData = await Promise.all(
+                    top10Teams.map(async (team, index) => {
+                        try {
+                            const solvesResponse = await fetch(`/api/v1/teams/${team.account_id}/solves`);
+                            const solvesData = await solvesResponse.json();
+
+                            if (!solvesData.success || solvesData.data.length === 0) {
+                                return null;
+                            }
+
+                            const solves = solvesData.data.sort((a, b) => new Date(a.date) - new Date(b.date));
+                            
+                            // Adiciona timestamps ao conjunto
+                            solves.forEach(solve => {
+                                allTimestamps.add(new Date(solve.date).getTime());
+                            });
+
+                            return {
+                                name: team.name,
+                                solves: solves,
+                                color: colors[index]
+                            };
+                        } catch (error) {
+                            console.error(`Erro ao buscar solves da equipe ${team.name}:`, error);
+                            return null;
+                        }
+                    })
+                );
+
+                // Filtra equipes que não retornaram dados
+                const validTeams = teamsData.filter(team => team !== null);
+
+                if (validTeams.length === 0) {
                     scoreChartContainer.style.display = 'none';
                     return;
                 }
 
-                // 3. Prepara os dados para o Chart.js
-                // O CTFd retorna um array de objetos {date: timestamp, challenge: {...}, value: points}
-                // Vamos calcular a pontuação acumulada ao longo do tempo
-                const solves = solvesData.data.sort((a, b) => new Date(a.date) - new Date(b.date));
+                // Converte timestamps para array ordenado
+                const sortedTimestamps = Array.from(allTimestamps).sort((a, b) => a - b);
                 
-                const labels = [];
-                const scores = [];
-                let accumulatedScore = 0;
+                // Cria labels a partir dos timestamps
+                const labels = sortedTimestamps.map((timestamp, index) => {
+                    if (index === 0) return "Início";
+                    const date = new Date(timestamp);
+                    return date.toLocaleTimeString();
+                });
 
-                // Adiciona o ponto inicial (0)
-                labels.push("Início");
-                scores.push(0);
+                // 3. Para cada equipe, cria um dataset
+                validTeams.forEach(team => {
+                    const dataPoints = [];
+                    let accumulatedScore = 0;
 
-                // Adiciona cada solve
-                solves.forEach(solve => {
-                    accumulatedScore += solve.challenge.value;
-                    const date = new Date(solve.date);
-                    labels.push(date.toLocaleTimeString());
-                    scores.push(accumulatedScore);
+                    sortedTimestamps.forEach(timestamp => {
+                        if (timestamp === 0) {
+                            // Ponto inicial
+                            dataPoints.push(0);
+                        } else {
+                            // Verifica se há algum solve neste timestamp
+                            const solvesAtThisTime = team.solves.filter(solve => {
+                                const solveTime = new Date(solve.date).getTime();
+                                return solveTime <= timestamp;
+                            });
+
+                            // Calcula pontuação acumulada até este timestamp
+                            accumulatedScore = solvesAtThisTime.reduce((sum, solve) => sum + solve.challenge.value, 0);
+                            dataPoints.push(accumulatedScore);
+                        }
+                    });
+
+                    datasets.push({
+                        label: team.name,
+                        data: dataPoints,
+                        borderColor: team.color,
+                        backgroundColor: team.color + '33', // Adiciona transparência
+                        tension: 0.4,
+                        fill: false,
+                        borderWidth: 2
+                    });
                 });
 
                 // 4. Renderiza o gráfico
@@ -168,30 +237,73 @@
                     type: 'line',
                     data: {
                         labels: labels,
-                        datasets: [{
-                            label: 'Pontuação',
-                            data: scores,
-                            borderColor: '#FF8C00',
-                            backgroundColor: 'rgba(255, 140, 0, 0.2)',
-                            tension: 0.4,
-                            fill: true
-                        }]
+                        datasets: datasets
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
                         scales: {
                             y: {
                                 beginAtZero: true,
                                 title: {
                                     display: true,
-                                    text: 'Pontos'
+                                    text: 'Pontos',
+                                    color: '#FF8C00',
+                                    font: {
+                                        size: 14,
+                                        weight: 'bold'
+                                    }
+                                },
+                                ticks: {
+                                    color: '#FFFFFF'
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Tempo',
+                                    color: '#FF8C00',
+                                    font: {
+                                        size: 14,
+                                        weight: 'bold'
+                                    }
+                                },
+                                ticks: {
+                                    color: '#FFFFFF',
+                                    maxRotation: 45,
+                                    minRotation: 45
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
                                 }
                             }
                         },
                         plugins: {
                             legend: {
-                                display: false
+                                display: true,
+                                position: 'top',
+                                labels: {
+                                    color: '#FFFFFF',
+                                    font: {
+                                        size: 12
+                                    },
+                                    padding: 15,
+                                    usePointStyle: true
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: '#FF8C00',
+                                bodyColor: '#FFFFFF',
+                                borderColor: '#FF8C00',
+                                borderWidth: 1
                             }
                         }
                     }

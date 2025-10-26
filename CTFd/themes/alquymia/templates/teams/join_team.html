@@ -1,161 +1,315 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Entrar em Equipe - CTF Alquymia 2025">
+    <title>Entrar em Equipe - CTF Alquymia 2025</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(ellipse at top, #1a1a1a 0%, #0a0a0a 100%);
+        }
+        .team-join-page {
+            min-height: 100vh;
+            background: var(--color-dark);
+            padding-top: 100px;
+        }
 
-{% block content %}
-<style>
-.join-team-container {
-    min-height: 70vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 3rem 1rem;
-}
+        .badge {
+            display: inline-block;
+            background: transparent;
+            border: 2px solid var(--color-primary);
+            color: var(--color-primary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 1.5rem;
+        }
 
-.join-team-card {
-    background: rgba(15, 23, 42, 0.9);
-    border: 2px solid rgba(255, 107, 53, 0.3);
-    border-radius: 20px;
-    padding: 3rem;
-    max-width: 550px;
-    width: 100%;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-}
+        .team-hero {
+            text-align: center;
+            padding: 3rem 2rem 2rem;
+        }
 
-.join-team-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 2.5rem;
-    color: #ff6b35;
-    margin-bottom: 0.5rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    text-align: center;
-}
+        .team-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
 
-.join-team-subtitle {
-    color: #94a3b8;
-    text-align: center;
-    margin-bottom: 2rem;
-    font-size: 1rem;
-}
+        .team-subtitle {
+            font-size: 1.2rem;
+            color: var(--color-text-muted);
+            line-height: 1.6;
+        }
 
-.form-label {
-    color: #ffffff;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-}
+        .team-join-container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
 
-.form-control {
-    background: rgba(30, 41, 59, 0.8);
-    border: 2px solid rgba(148, 163, 184, 0.3);
-    border-radius: 10px;
-    padding: 0.75rem 1rem;
-    color: #ffffff;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-}
+        .team-join-card {
+            background: rgba(30, 30, 50, 0.9);
+            border: 2px solid rgba(255, 140, 0, 0.3);
+            border-radius: 15px;
+            padding: 3rem 2.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
 
-.form-control:focus {
-    background: rgba(30, 41, 59, 0.9);
-    border-color: #ff6b35;
-    box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
-    color: #ffffff;
-}
+        .team-join-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
 
-.form-control::placeholder {
-    color: #64748b;
-}
+        .team-join-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
 
-.btn-join {
-    background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
-    border: none;
-    color: #ffffff;
-    padding: 0.875rem 2.5rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    border-radius: 10px;
-    transition: all 0.3s ease;
-    width: 100%;
-    margin-top: 1rem;
-}
+        .team-join-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
 
-.btn-join:hover {
-    background: linear-gradient(135deg, #ff8c42 0%, #ffa552 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(255, 107, 53, 0.4);
-    color: #ffffff;
-}
+        .team-join-subtitle {
+            font-size: 1rem;
+            color: var(--color-text-muted);
+            line-height: 1.6;
+        }
 
-.btn-back {
-    background: transparent;
-    border: 2px solid #64748b;
-    color: #94a3b8;
-    padding: 0.75rem 2rem;
-    font-size: 1rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    border-radius: 10px;
-    transition: all 0.3s ease;
-    width: 100%;
-    margin-top: 1rem;
-    text-decoration: none;
-    display: inline-block;
-    text-align: center;
-}
+        .info-box {
+            background: rgba(255, 140, 0, 0.1);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            border-radius: 10px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
 
-.btn-back:hover {
-    border-color: #00d4ff;
-    color: #00d4ff;
-    background: rgba(0, 212, 255, 0.1);
-    text-decoration: none;
-}
+        .info-box-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
 
-.mb-3 {
-    margin-bottom: 1.5rem;
-}
+        .info-box-text {
+            font-size: 0.95rem;
+            color: var(--color-primary);
+            line-height: 1.5;
+        }
 
-@media (max-width: 768px) {
-    .join-team-title {
-        font-size: 2rem;
-    }
-    
-    .join-team-card {
-        padding: 2rem 1.5rem;
-    }
-}
-</style>
+        .form-group {
+            margin-bottom: 2rem;
+        }
 
-<div class="join-team-container">
-    <div class="join-team-card">
-        <h1 class="join-team-title">👥 Juntar-se</h1>
-        <p class="join-team-subtitle">Entre em uma equipe existente</p>
-        
-        {% include "components/errors.html" %}
+        .form-label {
+            display: block;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-        {% with form = Forms.teams.TeamJoinForm() %}
-          <form method="POST">
-            <div class="mb-3">
-              {{ form.name.label(class="form-label") }}
-              {{ form.name(class="form-control", placeholder="Digite o nome da equipe") }}
+        .form-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: rgba(20, 20, 35, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--color-primary);
+            font-size: 1rem;
+            font-family: 'Rajdhani', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            background: rgba(20, 20, 35, 0.95);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+        }
+
+        .btn-primary {
+            flex: 1;
+            padding: 1.2rem 2rem;
+            background: var(--gradient-primary);
+            border: 2px solid var(--color-primary);
+            border-radius: 8px;
+            color: var(--color-dark);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 140, 0, 0.4);
+            border-color: #ffa500;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 1.2rem 2rem;
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: var(--color-primary);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="team-join-page">
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo-container">
+                <a href="index.html">
+                    <img src="assets/logos/logo-ctf.png" alt="Alquymia Logo" class="logo">
+                </a>
             </div>
-
-            <div class="mb-3">
-              {{ form.password.label(class="form-label") }}
-              {{ form.password(class="form-control", placeholder="Digite a senha da equipe") }}
+            <ul class="nav-menu">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="desafios1.html">Desafios</a></li>
+                <li><a href="classificacao.html">Classificação</a></li>
+                <li><a href="team.html" class="active">Equipes</a></li>
+                <li><a href="configuracoes.html">Perfil</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
+        </div>
+    </header>
 
-            {{ form.submit(class="btn-join", value="Juntar-se à Equipe") }}
-            {{ form.nonce() }}
-          </form>
-        {% endwith %}
-        
-        <a href="{{ url_for('challenges.listing') }}" class="btn-back">
-            ← Voltar
-        </a>
+    <!-- Team Hero -->
+    <div class="team-hero">
+        <div class="badge">4ª EDIÇÃO</div>
+        <h1 class="team-title">JUNTAR-SE À EQUIPE</h1>
+        <p class="team-subtitle">Entre em uma equipe existente</p>
     </div>
-</div>
-{% endblock %}
+
+    <!-- Team Join Section -->
+    <section class="team-join-container">
+        <div class="team-join-card">
+            <div class="team-join-header">
+                <div class="team-join-icon">🤝</div>
+            </div>
+
+            <div class="info-box">
+                <div class="info-box-icon">💡</div>
+                <div class="info-box-text">
+                    <strong>Dica:</strong> Peça ao líder da equipe o nome e a senha para poder se juntar!
+                </div>
+            </div>
+
+            <form id="joinTeamForm">
+                <div class="form-group">
+                    <label for="teamName" class="form-label">Team Name</label>
+                    <input 
+                        type="text" 
+                        id="teamName" 
+                        name="teamName" 
+                        class="form-input" 
+                        placeholder="Digite o nome da equipe"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="teamPassword" class="form-label">Team Password</label>
+                    <input 
+                        type="password" 
+                        id="teamPassword" 
+                        name="teamPassword" 
+                        class="form-input" 
+                        placeholder="Digite a senha da equipe"
+                        required
+                    >
+                </div>
+
+                <div class="form-buttons">
+                    <button type="submit" class="btn-primary">ENTRAR NA EQUIPE</button>
+                    <a href="team.html" class="btn-secondary">← VOLTAR</a>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+    <script>
+        document.getElementById('joinTeamForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const teamName = document.getElementById('teamName').value;
+            const teamPassword = document.getElementById('teamPassword').value;
+            
+            // Aqui você faria a chamada à API para entrar na equipe
+            console.log('Entrando na equipe:', { teamName, teamPassword });
+            
+            // Simular sucesso
+            alert(`Você entrou na equipe "${teamName}" com sucesso! 🎉`);
+            window.location.href = 'team-profile.html';
+        });
+    </script>
+    <script src="particles-canvas.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
 
