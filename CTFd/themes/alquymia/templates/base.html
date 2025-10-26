@@ -61,7 +61,7 @@
                 {% endif %}
             </div>
             <ul class="nav-menu">
-                <li><a href="{{ url_for('views.static_html') }}">Início</a></li>
+                <li><a href="/">Início</a></li>
                 {% if User.id %}
                     <li><a href="{{ url_for('challenges.listing') }}">Desafios</a></li>
                     <li><a href="{{ url_for('scoreboard.listing') }}">Classificação</a></li>
@@ -105,7 +105,7 @@
                 <div class="footer-links">
                     <h4>Links Rápidos</h4>
                     <ul>
-                        <li><a href="{{ url_for('views.static_html') }}">Início</a></li>
+                        <li><a href="/">Início</a></li>
                         {% if User.id %}
                             <li><a href="{{ url_for('challenges.listing') }}">Desafios</a></li>
                             <li><a href="{{ url_for('scoreboard.listing') }}">Classificação</a></li>
