@@ -239,7 +239,8 @@
                 return;
             }
             
-            const startDate = new Date(window.init.start);
+            // Converter timestamp Unix (segundos) para milissegundos
+            const startDate = new Date(window.init.start * 1000);
             const now = new Date();
             
             // Se o CTF já começou, mostrar conteúdo normal
