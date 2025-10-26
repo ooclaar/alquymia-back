@@ -88,37 +88,6 @@
         </nav>
     </header>
 
-    <!-- Cronômetro de contagem regressiva (antes do CTF começar) -->
-    <div id="countdown-container" style="display: none;">
-        <div class="countdown-wrapper">
-            <div class="countdown-badge">4ª EDIÇÃO</div>
-            <h1 class="countdown-title">ALQUYMIA CTF 2025</h1>
-            <p class="countdown-subtitle">O evento começará em:</p>
-            <div class="countdown-timer">
-                <div class="time-box">
-                    <span id="days" class="time-value">00</span>
-                    <span class="time-label">Dias</span>
-                </div>
-                <div class="time-box">
-                    <span id="hours" class="time-value">00</span>
-                    <span class="time-label">Horas</span>
-                </div>
-                <div class="time-box">
-                    <span id="minutes" class="time-value">00</span>
-                    <span class="time-label">Minutos</span>
-                </div>
-                <div class="time-box">
-                    <span id="seconds" class="time-value">00</span>
-                    <span class="time-label">Segundos</span>
-                </div>
-            </div>
-            <p class="countdown-info">
-                <i class="fas fa-calendar-alt"></i> Início: 21/11/2025 às 18:00 (GMT-3)<br>
-                <i class="fas fa-calendar-check"></i> Término: 23/11/2025 às 23:00 (GMT-3)
-            </p>
-        </div>
-    </div>
-
     <!-- Conteúdo principal -->
     <main role="main" id="main-content">
         {% block content %}
@@ -227,61 +196,7 @@
             }
         });
         
-        // Cronômetro de contagem regressiva
-        function initCountdown() {
-            const countdownContainer = document.getElementById('countdown-container');
-            const mainContent = document.getElementById('main-content');
-            
-            // Verificar se temos as datas configuradas
-            if (!window.init || !window.init.start) {
-                // Se não há data de início, mostrar conteúdo normal
-                if (mainContent) mainContent.style.display = 'block';
-                return;
-            }
-            
-            // Converter timestamp Unix (segundos) para milissegundos
-            const startDate = new Date(window.init.start * 1000);
-            const now = new Date();
-            
-            // Se o CTF já começou, mostrar conteúdo normal
-            if (now >= startDate) {
-                if (mainContent) mainContent.style.display = 'block';
-                if (countdownContainer) countdownContainer.style.display = 'none';
-                return;
-            }
-            
-            // CTF ainda não começou, mostrar cronômetro
-            if (countdownContainer) countdownContainer.style.display = 'flex';
-            if (mainContent) mainContent.style.display = 'none';
-            
-            // Atualizar cronômetro a cada segundo
-            function updateCountdown() {
-                const now = new Date().getTime();
-                const distance = startDate.getTime() - now;
-                
-                if (distance < 0) {
-                    // CTF começou! Recarregar a página
-                    location.reload();
-                    return;
-                }
-                
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                
-                document.getElementById('days').textContent = String(days).padStart(2, '0');
-                document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-                document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-                document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
-            }
-            
-            updateCountdown();
-            setInterval(updateCountdown, 1000);
-        }
-        
-        // Inicializar cronômetro
-        initCountdown();
+
     </script>
 </body>
 </html>
