@@ -137,7 +137,79 @@
         {{ Assets.js("assets/js/page.js") }}
     {% endblock %}
     
-    <script src="/themes/alquymia/static/js/script.js"></script>
+	    <script src="/themes/alquymia/static/js/script.js"></script>
+	    
+	    <script>
+	        function initCountdown() {
+	            const start = window.init.start;
+	            const end = window.init.end;
+	            const now = Date.now() / 1000; // Data atual em segundos
+	            
+	            const countdownContainer = document.getElementById('countdown-container');
+	            const placeholder = document.getElementById('hero-stats-placeholder');
+	
+	            if (!start || !end) {
+	                // Se as datas não estiverem configuradas, mostra o placeholder
+	                if (placeholder) {
+	                    placeholder.style.display = 'flex';
+	                }
+	                return;
+	            }
+	
+	            if (now < start) {
+	                // Antes do CTF: Mostra o cronômetro
+	                if (countdownContainer) {
+	                    countdownContainer.style.display = 'flex';
+	                }
+	                
+	                const interval = setInterval(() => {
+	                    const currentNow = Date.now() / 1000;
+	                    const distance = start - currentNow;
+	
+	                    if (distance < 0) {
+	                        clearInterval(interval);
+	                        if (countdownContainer) {
+	                            countdownContainer.style.display = 'none';
+	                        }
+	                        if (placeholder) {
+	                            placeholder.style.display = 'flex';
+	                        }
+	                        return;
+	                    }
+	
+	                    const days = Math.floor(distance / (60 * 60 * 24));
+	                    const hours = Math.floor((distance % (60 * 60 * 24)) / (60 * 60));
+	                    const minutes = Math.floor((distance % (60 * 60)) / 60);
+	                    const seconds = Math.floor(distance % 60);
+	
+	                    document.getElementById('days').innerText = days.toString().padStart(2, '0');
+	                    document.getElementById('hours').innerText = hours.toString().padStart(2, '0');
+	                    document.getElementById('minutes').innerText = minutes.toString().padStart(2, '0');
+	                    document.getElementById('seconds').innerText = seconds.toString().padStart(2, '0');
+	                }, 1000);
+	
+	            } else if (now >= start && now <= end) {
+	                // Durante o CTF: Mostra o placeholder (ou nada, dependendo do design)
+	                if (placeholder) {
+	                    placeholder.style.display = 'flex';
+	                }
+	            } else {
+	                // Depois do CTF: Mostra o placeholder (ou nada)
+	                if (placeholder) {
+	                    placeholder.style.display = 'flex';
+	                }
+	            }
+	        }
+	
+	        document.addEventListener('DOMContentLoaded', function() {
+	            // ... (restante do código DOMContentLoaded)
+	            
+	            // Inicializar cronômetro
+	            if (document.getElementById('countdown-container')) {
+	                initCountdown();
+	            }
+	        });
+	    </script>
     
     {{ Plugins.scripts }}
     
@@ -170,8 +242,9 @@
             });
         }
         
-        // Inicializar partículas e menu mobile
-        document.addEventListener('DOMContentLoaded', function() {
+	        // Inicializar partículas e menu mobile
+	        document.addEventListener('DOMContentLoaded', function() {
+	            // Inicializar cronômetro (movido para o final do script)
             centerModal();
             if (typeof initParticles === 'function') {
                 initParticles();
