@@ -356,13 +356,17 @@ body {
     font-size: 1.1rem;
 }
 
-/* ===== Hero Stats ===== *.hero-stats {
+/* ===== Hero Stats ===== .hero-stats {
     display: flex;
     gap: 3rem;
     justify-content: center;
     flex-wrap: wrap;
     animation: fadeInUp 0.8s ease 0.8s both;
     /* Removido fundo e borda da caixa principal */
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+}    /* Removido fundo e borda da caixa principal */
     background: transparent !important;
     border: none !important;
     padding: 0 !important;
@@ -380,6 +384,24 @@ body {
     text-align: center;
     /* Reduzido o padding para diminuir a altura da caixa */
     padding: 0 1rem !important;
+}
+
+/* Estilos para o cronômetro */
+#countdown-container .stat-item {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 0.5rem !important; /* Reduzido o padding para compactar */
+}
+
+#countdown-container .stat-number {
+    font-size: 3.5em !important; /* Aumentado um pouco para destaque */
+    line-height: 1em !important;
+}
+
+#countdown-container .stat-label {
+    font-size: 0.8em !important;
+    margin-top: -0.5rem;
 }   /* Reduzido o padding para diminuir a altura da caixa */
     padding: 0 1rem;
 }
