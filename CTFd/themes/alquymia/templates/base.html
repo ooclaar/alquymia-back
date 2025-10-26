@@ -103,16 +103,7 @@
                     <img src="/themes/alquymia/static/img/logo-alquymia.png" alt="Alquymia Logo">
                     <p>Transformando vidas através do conhecimento em Cyber Segurança</p>
                 </div>
-                <div class="footer-links">
-                    <h4>Links Rápidos</h4>
-                    <ul>
-                        <li><a href="/">Início</a></li>
-                        {% if User.id %}
-                            <li><a href="{{ url_for('challenges.listing') }}">Desafios</a></li>
-                            <li><a href="{{ url_for('scoreboard.listing') }}">Classificação</a></li>
-                        {% endif %}
-                    </ul>
-                </div>
+
                 <div class="footer-social">
                     <h4>Redes Sociais</h4>
                     <div class="social-icons">
@@ -125,7 +116,7 @@
             </div>
             <div class="footer-bottom">
                 <p>&copy; 2025 Alquymia Community. Todos os direitos reservados.</p>
-                <p><a href="https://ctfd.io" class="text-secondary">Powered by CTFd</a></p>
+
             </div>
         </div>
     </footer>
