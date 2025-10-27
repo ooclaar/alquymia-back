@@ -14,11 +14,12 @@
 }
 
 .footer-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 3rem;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    gap: 3rem !important;
     margin-bottom: 2rem;
+    grid-template-columns: unset !important;
 }
 
 .footer-logo {
@@ -27,8 +28,8 @@
 }
 
 .footer-social {
-    flex: 0 0 auto;
-    margin-left: auto;
+    flex: 0 0 auto !important;
+    margin-left: auto !important;
 }
 
 .footer-logo img {
