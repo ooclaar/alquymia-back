@@ -26,6 +26,26 @@
     <p class="subtitle">Acompanhe o ranking em tempo real e veja quem está dominando o CTF</p>
 </section>
 
+<!-- Stats Section -->
+<section class="hero-stats-section">
+    <div class="container">
+        <div class="hero-stats">
+            <div class="stat-item">
+                <div class="stat-number" id="total-teams">-</div>
+                <div class="stat-label">EQUIPES</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="total-solves">-</div>
+                <div class="stat-label">FLAGS CAPTURADAS</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="time-remaining">-</div>
+                <div class="stat-label">TEMPO RESTANTE</div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Progress Chart Section (Isolado para estabilidade) -->
 <section class="chart-section">
     <div class="container">
@@ -320,6 +340,51 @@
 
         // Desenha o gráfico na inicialização
         drawScoreboardChart();
+
+        // Função para atualizar as estatísticas
+        async function updateStats() {
+            try {
+                // Busca total de equipes
+                const teamsResponse = await fetch('/api/v1/teams');
+                const teamsData = await teamsResponse.json();
+                const totalTeams = teamsData.success ? teamsData.data.length : 0;
+                document.getElementById('total-teams').textContent = totalTeams;
+
+                // Busca total de solves (flags capturadas)
+                const scoreboardResponse = await fetch('/api/v1/scoreboard');
+                const scoreboardData = await scoreboardResponse.json();
+                let totalSolves = 0;
+                if (scoreboardData.success) {
+                    // Soma todos os solves de todas as equipes
+                    for (const team of scoreboardData.data) {
+                        const solvesResponse = await fetch(`/api/v1/teams/${team.account_id}/solves`);
+                        const solvesData = await solvesResponse.json();
+                        if (solvesData.success) {
+                            totalSolves += solvesData.data.length;
+                        }
+                    }
+                }
+                document.getElementById('total-solves').textContent = totalSolves;
+
+                // Calcula tempo restante
+                const ctfEnd = new Date(window.init.end * 1000);
+                const now = new Date();
+                const timeRemaining = Math.max(0, Math.floor((ctfEnd - now) / (1000 * 60 * 60 * 24))); // Dias restantes
+                document.getElementById('time-remaining').textContent = timeRemaining;
+
+            } catch (error) {
+                console.error('Erro ao atualizar estatísticas:', error);
+                document.getElementById('total-teams').textContent = '-';
+                document.getElementById('total-solves').textContent = '-';
+                document.getElementById('time-remaining').textContent = '-';
+            }
+        }
+
+        // Atualiza as estatísticas na inicialização
+        updateStats();
+
+        // Atualiza as estatísticas a cada 30 segundos
+        setInterval(updateStats, 30000);
     });
 </script>
 {% endblock %}
