@@ -2655,7 +2655,10 @@ body {
     border-radius: 20px;
     font-family: 'Orbitron', sans-serif;
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 1.1rem;
+    min-width: 80px;
+    justify-content: center;
+    white-space: nowrap;
 }
 
 .rank-badge.gold {
@@ -2674,6 +2677,14 @@ body {
     background: linear-gradient(135deg, #CD7F32, #B87333);
     color: #1a1a1a;
     box-shadow: 0 0 20px rgba(205, 127, 50, 0.5);
+}
+
+/* Badges sem classe (4º em diante) */
+.rank-badge:not(.gold):not(.silver):not(.bronze) {
+    background: rgba(255, 140, 0, 0.2);
+    color: #FF8C00;
+    border: 2px solid rgba(255, 140, 0, 0.5);
+    box-shadow: 0 0 10px rgba(255, 140, 0, 0.3);
 }
 
 .rank-number {
