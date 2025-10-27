@@ -2445,21 +2445,8 @@ body {
 }
 
 .challenge-card.solved::before {
-    content: '✓';
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #000;
-    z-index: 10;
+    /* Círculo verde removido */
+    display: none;
     animation: checkmark 0.5s ease;
 }
 
@@ -3999,8 +3986,8 @@ body {
 }
 
 .challenge-card.solved::before {
-    background: linear-gradient(90deg, transparent, #00FF00, transparent);
-    opacity: 1;
+    /* Círculo verde removido */
+    display: none;
 }
 
 .card-header {
