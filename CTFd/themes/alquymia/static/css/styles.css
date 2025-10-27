@@ -2164,7 +2164,7 @@ body {
 .challenge-modal-solved {
     background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
     color: #000;
-    animation: pulse 2s ease-in-out infinite;
+    /* Animação removida para manter o badge estático */
 }
 
 @keyframes pulse {
