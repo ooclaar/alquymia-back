@@ -1,394 +1,109 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!-- Hero Section -->
-<section class="hero">
-    <div class="hero-content">
-        <div class="hero-badge" data-aos="fade-down">
-            <span class="badge-text">4ª EDIÇÃO</span>
-        </div>
-        <h1 class="hero-title" data-aos="fade-up" data-aos-delay="200">
-            BEM-VINDO AO<br>
-            <span class="highlight">ALQUYMIA CTF</span>
-        </h1>
-        <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="400">
-            Uma competição de segurança cibernética feita pela comunidade para a comunidade. Teste suas habilidades em desafios de criptografia, web exploitation, forense digital e muito mais!
-        </p>
-        <div class="hero-cta" data-aos="fade-up" data-aos-delay="600">
-            {% if User.id %}
-                <a href="{{ url_for('challenges.listing') }}" class="btn btn-primary">
-                    <span>VER DESAFIOS</span>
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                        <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </a>
-                <a href="{{ url_for('scoreboard.listing') }}" class="btn btn-secondary">VER CLASSIFICAÇÃO</a>
+{#
+    Lógica condicional para renderizar:
+    1. Landing Page (se a rota for /)
+    2. Página Customizada (se a rota for diferente de /)
+#}
+{% if request.path == '/' %}
+    {# Landing Page #}
+    {% include "page_landing.html" %}
+{% else %}
+    {# Página Customizada #}
+    <style>
+        .custom-page-container {
+            min-height: calc(100vh - 200px);
+            padding: 4rem 0;
+            background: var(--color-bg-primary, #0a0a0a);
+        }
+        .custom-page-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            color: var(--color-text-primary, #ffffff);
+            line-height: 1.8;
+        }
+        .custom-page-content h1 {
+            font-family: var(--font-primary, 'Orbitron', sans-serif);
+            font-size: 3rem;
+            font-weight: 900;
+            color: #FF8C00;
+            margin-bottom: 2rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .custom-page-content h2 {
+            font-family: var(--font-primary, 'Orbitron', sans-serif);
+            font-size: 2rem;
+            font-weight: 700;
+            color: #FF8C00;
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid rgba(255, 140, 0, 0.3);
+            padding-bottom: 0.5rem;
+        }
+        .custom-page-content h3 {
+            font-family: var(--font-primary, 'Orbitron', sans-serif);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #FFA500;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        .custom-page-content p {
+            font-family: var(--font-secondary, 'Inter', sans-serif);
+            font-size: 1.1rem;
+            color: var(--color-text-secondary, #b0b0b0);
+            margin-bottom: 1.5rem;
+        }
+        .custom-page-content strong {
+            color: var(--color-text-primary, #ffffff);
+            font-weight: 600;
+        }
+        .custom-page-content ul, .custom-page-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+        .custom-page-content li {
+            font-family: var(--font-secondary, 'Inter', sans-serif);
+            font-size: 1.1rem;
+            color: var(--color-text-secondary, #b0b0b0);
+            margin-bottom: 0.75rem;
+            line-height: 1.8;
+        }
+        .custom-page-content a {
+            color: #FF8C00;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255, 140, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        .custom-page-content a:hover {
+            color: #FFA500;
+            border-bottom-color: #FFA500;
+        }
+        @media (max-width: 768px) {
+            .custom-page-container { padding: 2rem 0; }
+            .custom-page-content { padding: 0 1.5rem; }
+            .custom-page-content h1 { font-size: 2rem; }
+            .custom-page-content h2 { font-size: 1.5rem; }
+            .custom-page-content h3 { font-size: 1.25rem; }
+            .custom-page-content p, .custom-page-content li { font-size: 1rem; }
+        }
+    </style>
+    <div class="custom-page-container">
+        <div class="custom-page-content">
+            {% if content %}
+                <h1 class="text-center">{{ title }}</h1>
+                <div class="page-content">
+                    {{ content | safe }}
+                </div>
             {% else %}
-                <a href="{{ url_for('auth.register') }}" class="btn btn-primary">
-                    <span>INSCREVA-SE AGORA</span>
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                        <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </a>
-                <a href="#sobre" class="btn btn-secondary">SAIBA MAIS</a>
-            {% endif %}
-        </div>
-        <div class="hero-stats-wrapper" data-aos="fade-up" data-aos-delay="800">
-            <div id="countdown-title" style="display: none; text-align: center; color: #ff9900; margin-bottom: 10px; font-size: 1.2em; font-weight: bold;">INICIA EM:</div>
-            <div class="hero-stats" id="hero-stats-container" style="background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; min-height: 0 !important;">
-            <div id="countdown-container" style="display: none; background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; height: auto !important; min-height: 0 !important;" class="countdown-active">
-                <div class="stat-item" style="background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important;">
-                    <div class="stat-number" id="days">00</div>
-                    <div class="stat-label">DIAS</div>
-                </div>
-                <div class="stat-divider"></div>
-                <div class="stat-item" style="background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important;">
-                    <div class="stat-number" id="hours">00</div>
-                    <div class="stat-label">HORAS</div>
-                </div>
-                <div class="stat-divider"></div>
-                <div class="stat-item" style="background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important;">
-                    <div class="stat-number" id="minutes">00</div>
-                    <div class="stat-label">MINUTOS</div>
-                </div>
-                <div class="stat-divider"></div>
-                <div class="stat-item" style="background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important;">
-                    <div class="stat-number" id="seconds">00</div>
-                    <div class="stat-label">SEGUNDOS</div>
-                </div>
-            </div>
-            <div id="hero-stats-placeholder" style="display: none;" class="placeholder-active">
-                <div class="stat-item" style="background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important;">
-                    <div class="stat-number">21/11</div>
-                    <div class="stat-label">Início: 18h</div>
-                </div>
-                <div class="stat-divider"></div>
-                <div class="stat-item" style="background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important;">
-                    <div class="stat-number">23/11</div>
-                    <div class="stat-label">Fim: 23h</div>
-                </div>
-                <div class="stat-divider"></div>
-                <div class="stat-item" style="background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important;">
-                    <div class="stat-number">7+</div>
-                    <div class="stat-label">Categorias</div>
-                </div>
-            </div>
-            </div>
-        </div>
-    </div>
-    <div class="hero-scroll">
-        <div class="scroll-indicator">
-            <span></span>
-        </div>
-    </div>
-</section>
-
-<!-- Sobre a Comunidade -->
-<section id="sobre" class="section section-about">
-    <div class="container">
-        <div class="section-header" data-aos="fade-up">
-            <span class="section-tag">QUEM SOMOS</span>
-            <h2 class="section-title">A Comunidade Alquymia</h2>
-        </div>
-        <div class="about-content">
-            <div class="about-text" data-aos="fade-right">
-                <p>
-                    Somos uma <strong>comunidade brasileira de elite em segurança da informação</strong>, movida pela 
-                    paixão de transformar vidas com conhecimento em Cyber Segurança.
-                </p>
-                <p>
-                    O Alquymia é um movimento independente que conecta mentes curiosas e experientes em 
-                    uma jornada prática e descontraída rumo ao domínio da Cyber Segurança. Com desafios reais 
-                    e conversas que inspiram, ajudamos profissionais a evoluírem e conquistarem seus objetivos 
-                    na segurança da informação.
-                </p>
-                <div class="about-features">
-                    <div class="feature-item">
-                        <div class="feature-icon">🎯</div>
-                        <div class="feature-text">
-                            <h4>Aprendizado Prático</h4>
-                            <p>Exercícios hands-on e desafios reais</p>
-                        </div>
-                    </div>
-                    <div class="feature-item">
-                        <div class="feature-icon">🤝</div>
-                        <div class="feature-text">
-                            <h4>Comunidade Ativa</h4>
-                            <p>Network com profissionais de todo Brasil</p>
-                        </div>
-                    </div>
-                    <div class="feature-item">
-                        <div class="feature-icon">🚀</div>
-                        <div class="feature-text">
-                            <h4>Crescimento Contínuo</h4>
-                            <p>Eventos, workshops e competições regulares</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="about-visual" data-aos="fade-left">
-                <div class="visual-card">
-                    <div class="card-glow"></div>
-                    <div class="card-content">
-                        <div class="terminal-header">
-                            <span class="terminal-dot red"></span>
-                            <span class="terminal-dot yellow"></span>
-                            <span class="terminal-dot green"></span>
-                        </div>
-                        <div class="terminal-body">
-                            <p><span class="prompt">$</span> whoami</p>
-                            <p class="output">alquymia_community</p>
-                            <p><span class="prompt">$</span> cat mission.txt</p>
-                            <p class="output">Transformar vidas através de</p>
-                            <p class="output">conhecimento em Cyber Segurança</p>
-                            <p class="output highlight">14 -la -billy</p>
-                            <p class="output">- Criptografia</p>
-                            <p class="output">- Web Exploitation</p>
-                            <p class="output">- Análise Forense</p>
-                            <p class="output">- Esteganografia</p>
-                            <p class="output">- Reverse Engineering</p>
-                            <p class="output">- MISC</p>
-                            <p><span class="prompt cursor">█</span></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- O Evento -->
-<section id="evento" class="section section-event">
-    <div class="container">
-        <div class="section-header" data-aos="fade-up">
-            <span class="section-tag">CTF 2025</span>
-            <h2 class="section-title">O Campo de Batalha Supremo</h2>
-            <p class="section-description">
-                Prepare-se para uma competição intensa de 72h em que suas habilidades em segurança cibernética 
-                serão desafiadas ao máximo. Junte-se a participantes de todo o Brasil, desde iniciantes até 
-                experts, e mostre os concorrentes e mostre que você está entre os melhores.
-            </p>
-        </div>
-        <div class="event-grid">
-            <div class="event-card" data-aos="fade-up" data-aos-delay="100">
-                <div class="event-card-icon">🔐</div>
-                <h3>Criptografia</h3>
-                <p>Decifre códigos complexos, quebre cifras e domine técnicas de criptoanálise para desvendar segredos.</p>
-            </div>
-            <div class="event-card" data-aos="fade-up" data-aos-delay="200">
-                <div class="event-card-icon">🌐</div>
-                <h3>Web Exploitation</h3>
-                <p>Explore vulnerabilidades em aplicações web, desde SQL Injection até XSS e RCE para obter acesso.</p>
-            </div>
-            <div class="event-card" data-aos="fade-up" data-aos-delay="300">
-                <div class="event-card-icon">🔍</div>
-                <h3>Análise Forense</h3>
-                <p>Investigue evidências digitais, analise logs e descubra pistas escondidas em sistemas comprometidos.</p>
-            </div>
-            <div class="event-card" data-aos="fade-up" data-aos-delay="400">
-                <div class="event-card-icon">🖼️</div>
-                <h3>Esteganografia</h3>
-                <p>Encontre mensagens ocultas em imagens, áudios e vídeos usando técnicas avançadas de esteganografia.</p>
-            </div>
-            <div class="event-card" data-aos="fade-up" data-aos-delay="500">
-                <div class="event-card-icon">⚙️</div>
-                <h3>Reverse Engineering</h3>
-                <p>Desmonte binários, analise código assembly e descubra como programas funcionam internamente.</p>
-            </div>
-            <div class="event-card" data-aos="fade-up" data-aos-delay="600">
-                <div class="event-card-icon">🎯</div>
-                <h3>MISC</h3>
-                <p>Desafios diversos e criativos que não se encaixam em categorias tradicionais, testando seu pensamento lateral.</p>
-            </div>
-            <div class="event-card" data-aos="fade-up" data-aos-delay="700">
-                <div class="event-card-icon">🔧</div>
-                <h3>OSINT</h3>
-                <p>Utilize técnicas de inteligência de fontes abertas para coletar informações públicas disponíveis na internet.</p>
-            </div>
-            <div class="event-card" data-aos="fade-up" data-aos-delay="800">
-                <div class="event-card-icon">📡</div>
-                <h3>Wireless</h3>
-                <p>Explore vulnerabilidades em redes sem fio, analise tráfego WiFi e domine técnicas de segurança wireless.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Premiação -->
-<section id="premiacao" class="section section-awards">
-    <div class="container">
-        <div class="section-header" data-aos="fade-up">
-            <span class="section-tag">RECOMPENSAS</span>
-            <h2 class="section-title">Premiação</h2>
-            <p class="section-description">
-                Os melhores competidores serão reconhecidos e premiados por seu desempenho excepcional.
-            </p>
-        </div>
-        <div class="awards-grid">
-            <div class="award-card second" data-aos="fade-up" data-aos-delay="100">
-                <div class="award-medal">
-                    <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
-                        <circle cx="30" cy="30" r="28" fill="#C0C0C0" stroke="#A8A8A8" stroke-width="2"/>
-                        <text x="30" y="40" font-size="24" font-weight="bold" fill="#fff" text-anchor="middle">2º</text>
-                    </svg>
-                </div>
-                <h3>Segundo Lugar</h3>
-                <div class="award-prize">Prêmios e Certificado</div>
-                <ul class="award-benefits">
-                    <li>Certificado de Reconhecimento</li>
-                    <li>Prêmios dos Patrocinadores</li>
-                    <li>Destaque na Comunidade</li>
-                </ul>
-            </div>
-            <div class="award-card first" data-aos="fade-up">
-                <div class="award-badge">CAMPEÃO</div>
-                <div class="award-medal">
-                    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-                        <circle cx="40" cy="40" r="38" fill="#FFD700" stroke="#FFA500" stroke-width="2"/>
-                        <text x="40" y="52" font-size="32" font-weight="bold" fill="#fff" text-anchor="middle">1º</text>
-                    </svg>
-                </div>
-                <h3>Primeiro Lugar</h3>
-                <div class="award-prize">Prêmios Especiais</div>
-                <ul class="award-benefits">
-                    <li>Certificado de Campeão</li>
-                    <li>Prêmios Exclusivos</li>
-                    <li>Reconhecimento Nacional</li>
-                    <li>Troféu de Campeão</li>
-                </ul>
-            </div>
-            <div class="award-card third" data-aos="fade-up" data-aos-delay="200">
-                <div class="award-medal">
-                    <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
-                        <circle cx="30" cy="30" r="28" fill="#CD7F32" stroke="#B8722C" stroke-width="2"/>
-                        <text x="30" y="40" font-size="24" font-weight="bold" fill="#fff" text-anchor="middle">3º</text>
-                    </svg>
-                </div>
-                <h3>Terceiro Lugar</h3>
-                <div class="award-prize">Prêmios e Certificado</div>
-                <ul class="award-benefits">
-                    <li>Certificado de Reconhecimento</li>
-                    <li>Prêmios dos Patrocinadores</li>
-                    <li>Destaque na Comunidade</li>
-                </ul>
-            </div>
-        </div>
-        <div class="awards-note" data-aos="fade-up" data-aos-delay="300">
-            <p>💡 Todos os participantes receberão certificado de participação e terão acesso aos write-ups dos desafios após o evento.</p>
-        </div>
-    </div>
-</section>
-
-<!-- Patrocinadores -->
-<section id="patrocinadores" class="section section-sponsors">
-    <div class="container">
-        <div class="section-header" data-aos="fade-up">
-            <span class="section-tag">APOIO</span>
-            <h2 class="section-title">Patrocinadores</h2>
-            <p class="section-description">
-                Empresas e organizações que tornam este evento possível.
-            </p>
-        </div>
-        <div class="sponsors-grid" data-aos="fade-up" data-aos-delay="200">
-            <div class="sponsor-item">
-                <img src="/themes/alquymia/static/img/logos/logo_desec.webp" alt="DESEC">
-            </div>
-            <div class="sponsor-item">
-                <img src="/themes/alquymia/static/img/logos/logo_fiap.webp" alt="FIAP">
-            </div>
-            <div class="sponsor-item">
-                <img src="/themes/alquymia/static/img/logos/logo_acaditi.webp" alt="ACADITI">
-            </div>
-            <div class="sponsor-item">
-                <img src="/themes/alquymia/static/img/logos/logo_extreme_hacking.webp" alt="Extreme Hacking">
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Parceiros e Apoiadores -->
-<section class="section section-partners">
-    <div class="container">
-        <div class="section-header" data-aos="fade-up">
-            <span class="section-tag">COMUNIDADE</span>
-            <h2 class="section-title">Parceiros e Apoiadores</h2>
-        </div>
-        <div class="partners-grid" data-aos="fade-up" data-aos-delay="200">
-            <div class="partner-item">
-                <img src="/themes/alquymia/static/img/logos/logo_blau_araujo.webp" alt="Blau Araujo">
-            </div>
-            <div class="partner-item">
-                <img src="/themes/alquymia/static/img/logos/logo_bula_anonima.webp" alt="Bula Anônima">
-            </div>
-            <div class="partner-item">
-                <img src="/themes/alquymia/static/img/logos/logo_crowsec.webp" alt="Crowsec">
-            </div>
-            <div class="partner-item">
-                <img src="/themes/alquymia/static/img/logos/logo_hacking.webp" alt="Hacking">
-            </div>
-            <div class="partner-item">
-                <img src="/themes/alquymia/static/img/logos/logo_investiga_osint.webp" alt="Investiga OSINT">
-            </div>
-            <div class="partner-item">
-                <img src="/themes/alquymia/static/img/logos/logo_menino.webp" alt="Menino">
-            </div>
-            <div class="partner-item">
-                <img src="/themes/alquymia/static/img/logos/logo_sarah.webp" alt="SARAH">
-            </div>
-            <div class="partner-item">
-                <img src="/themes/alquymia/static/img/logos/logo_hack_in_cariri.webp" alt="Hack In Cariri">
-            </div>
-            <div class="partner-item">
-                <img src="/themes/alquymia/static/img/logos/logo_hakker_club.webp" alt="Hakker Club">
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Inscrição -->
-<section id="inscricao" class="section section-register">
-    <div class="container">
-        <div class="register-content" data-aos="zoom-in">
-            <h2>Sua Aventura Cibernética Começa Agora!</h2>
-            <p>Não perca a oportunidade de participar do maior CTF da comunidade brasileira de segurança da informação.</p>
-            {% if not User.id %}
-            <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-large">
-                <span>INSCREVA-SE AGORA</span>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </a>
-            {% else %}
-            <a href="{{ url_for('challenges.listing') }}" class="btn btn-primary btn-large">
-                <span>VER DESAFIOS</span>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </a>
+                <h1>Página Customizada</h1>
+                <p>O conteúdo desta página não foi definido no painel administrativo.</p>
             {% endif %}
         </div>
     </div>
-</section>
+{% endif %}
 {% endblock %}
-
-{% block scripts %}
-{{ super() }}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Smooth scroll para âncoras
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-    });
-</script>
-{% endblock %}
-
